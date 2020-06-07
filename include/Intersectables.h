@@ -9,7 +9,7 @@ namespace Intersectables {
 
 class Sphere : public Raytracing::RayIntersectable {
     public:
-        Raytracing::HitInfo intersect(Raytracing::Ray ray) override; 
+        Raytracing::HitInfo intersect(const Raytracing::Ray& ray) override; 
         Sphere(float r, glm::vec3 c) : r(r), c(c) {}
 
     private:

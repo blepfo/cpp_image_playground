@@ -21,11 +21,7 @@ namespace Raytracing {
     const HitInfo noHit = { 0.0f, glm::vec3(0.0f), glm::vec3(0.0f), NULL };
 
     class RayIntersectable : public SceneObject {
-        virtual HitInfo intersect(Ray r) = 0;
-    };
-
-    class Illuminator {
-        virtual glm::vec3 illuminate(HitInfo hitInfo, glm::vec3 eye) = 0;
+        virtual HitInfo intersect(const Ray& r) = 0;
     };
 
 } // namespace Raytracing

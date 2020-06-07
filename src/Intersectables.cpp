@@ -5,7 +5,7 @@
 
 namespace Intersectables {
 
-Raytracing::HitInfo Sphere::intersect(Raytracing::Ray ray) {
+Raytracing::HitInfo Sphere::intersect(const Raytracing::Ray& ray) {
     glm::vec3 originMinusCenter = ray.o - this->c;
     float a = glm::dot(ray.d, ray.d);
     float b = 2.0f * glm::dot(ray.d, originMinusCenter);
@@ -30,6 +30,9 @@ Raytracing::HitInfo Sphere::intersect(Raytracing::Ray ray) {
         glm::vec3 normal = glm::normalize(intersectionPoint - this->c);
         Raytracing::HitInfo intersectionInfo = { tIntersection, intersectionPoint, normal, this };
         return intersectionInfo;
+    } else {
+        // Only reach here if the intersection is behind the camera (t1 < 0 && t2 < 0)
+        return Raytracing::noHit;
     }
 }
 

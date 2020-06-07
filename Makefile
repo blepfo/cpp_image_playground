@@ -7,7 +7,7 @@ CC=g++ -std=c++17
 
 all: $(BIN)/main.o
 
-$(BIN)/main.o: $(SRC)/main.cpp $(OBJ)/save_utils.o $(OBJ)/Intersectables.o $(OBJ)/SimpleLights.o $(INC)/Raytracing.h
+$(BIN)/main.o: $(SRC)/main.cpp $(OBJ)/save_utils.o $(OBJ)/Intersectables.o $(OBJ)/SimpleLights.o $(INC)/Raytracing.h $(INC)/SimpleMaterial.h
 	$(CC) \
     -I/usr/local/include \
 	$(OBJ)/Intersectables.o \

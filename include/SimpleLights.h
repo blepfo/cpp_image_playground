@@ -3,26 +3,35 @@
 
 #include<glm/glm.hpp>
 
-#include "../include/Raytracing.h"
+#include "../include/SimpleMaterial.h"
 
 namespace SimpleLights {
 
-class SimpleLight : public Raytracing::Illuminator {
-    public: 
-        virtual glm::vec3 illuminate(Raytracing::HitInfo hitInfo, glm::vec3 eye) = 0;
+class SimpleLight {
+    public:
+        virtual glm::vec3 illuminate(
+            glm::vec3 p,
+            glm::vec3 n,
+            glm::vec3 eye,
+            const SimpleMaterial::Material& material
+        ) = 0;
 
         glm::vec3 i;    // Intensity
         glm::vec3 ambient;
 
         SimpleLight(glm::vec3 i, glm::vec3 ambient)
             : i(i), ambient(ambient) {}
-
 };
 
 
 class PointLight : public SimpleLight {
     public:
-        glm::vec3 illuminate(Raytracing::HitInfo hitinfo, glm::vec3 eye) override;
+        glm::vec3 illuminate(
+            glm::vec3 p,
+            glm::vec3 n,
+            glm::vec3 eye,
+            const SimpleMaterial::Material& material
+        ) override;
         
         glm::vec3 o;    // Origin
         glm::vec3 attenuation;
@@ -31,10 +40,14 @@ class PointLight : public SimpleLight {
             : o(o), attenuation(attenuation), SimpleLight(i, ambient) {}
 };
 
-
 class DirectionLight : public SimpleLight {
     public:
-        glm::vec3 illuminate(Raytracing::HitInfo hitinfo, glm::vec3 eye) override;
+        glm::vec3 illuminate(
+            glm::vec3 p,
+            glm::vec3 n,
+            glm::vec3 eye,
+            const SimpleMaterial::Material& material
+        ) override;
 
         glm::vec3 d;    // Direction
 

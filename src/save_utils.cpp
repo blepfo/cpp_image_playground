@@ -12,6 +12,8 @@ namespace SaveUtils {
 
 /** 
  * Convert RGB array defined as 2D array of glm::vec3 to PPM string.
+ * http://netpbm.sourceforge.net/doc/ppm.html
+ * http://www.realtimerendering.com/raytracing/Ray%20Tracing%20in%20a%20Weekend.pdf
  * @param rgbImage - 2D array of vec3 RGB
  * @param width - Image width (rgbImage axis 1)
  * @param height - Image height (rgbImage axis 0)
