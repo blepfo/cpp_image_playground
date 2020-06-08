@@ -140,7 +140,7 @@ int main() {
     SimpleLights::PointLight pointLight1 = {
         glm::vec3(1.5f, 2.0f, 0.5f),   // Origin
         glm::vec3(1.0f, 0.0f, 0.0f),    // Attenuation
-        glm::vec3(1.0f, 1.0f, 1.0f),    // Intensity
+        glm::vec3(0.6f),                // Intensity
         glm::vec3(0.0f, 0.0f, 0.0f),    // Ambient
     };
     SimpleLights::PointLight pointLight2 = {
@@ -169,7 +169,7 @@ int main() {
         0.5f,                           // Radius
         glm::vec3(0.0f, 0.0f, 0.0f),    // Center
         redMaterial,                    // Material
-        Transform::translate(0.5f, 0.5f, -3.0f) * Transform::scale(1.0f, 1.5f, 1.0f)
+        Transform::translate(0.5f, 0.5f, -3.0f) * Transform::scale(1.0f, 2.0f, 1.0f)
     };
     SimpleObjects::Sphere sphere2 = { 
         0.5f,                           // Radius

@@ -62,6 +62,13 @@ class Scene {
 
 Raytracing::HitInfo rayCast(const Raytracing::Ray& ray, const Scene& scene); 
 
+bool isInShadow(
+    const glm::vec3 p, 
+    const glm::vec3 lightDir, 
+    const float lightDistance, 
+    const Scene& scene
+);
+
 glm::vec3 whittedRayTrace(
     const Raytracing::Ray& viewRay, 
     const Scene& scene,
