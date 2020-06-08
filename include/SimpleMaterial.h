@@ -1,5 +1,4 @@
-#ifndef _SIMPLE_MATERIAL_H
-#define _SIMPLE_MATERIAL_H
+#pragma once
 
 namespace SimpleMaterial {
 
@@ -22,5 +21,3 @@ class Material {
 };
 
 } // namespace SimpleMaterial
-
-#endif

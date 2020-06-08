@@ -1,5 +1,4 @@
-#ifndef _SIMPLE_LIGHTS_H
-#define _SIMPLE_LIGHTS_H
+#pragma once
 
 #include<glm/glm.hpp>
 
@@ -13,7 +12,7 @@ class SimpleLight {
             glm::vec3 p,
             glm::vec3 n,
             glm::vec3 eye,
-            const SimpleMaterial::Material& material
+            const SimpleMaterial::Material* material
         ) = 0;
 
         glm::vec3 i;    // Intensity
@@ -30,7 +29,7 @@ class PointLight : public SimpleLight {
             glm::vec3 p,
             glm::vec3 n,
             glm::vec3 eye,
-            const SimpleMaterial::Material& material
+            const SimpleMaterial::Material* material
         ) override;
         
         glm::vec3 o;    // Origin
@@ -46,7 +45,7 @@ class DirectionLight : public SimpleLight {
             glm::vec3 p,
             glm::vec3 n,
             glm::vec3 eye,
-            const SimpleMaterial::Material& material
+            const SimpleMaterial::Material* material
         ) override;
 
         glm::vec3 d;    // Direction
@@ -56,5 +55,3 @@ class DirectionLight : public SimpleLight {
 };
 
 } // namespace SimpleLights
-
-#endif

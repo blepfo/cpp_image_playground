@@ -3,14 +3,17 @@
 #include<functional>
 #include<iostream>
 #include<string>
+#include<vector>
 
 #include<glm/glm.hpp>
 
-#include "../include/save_utils.h"
-#include "../include/Intersectables.h"
 #include "../include/Raytracing.h"
+#include "../include/save_utils.h"
 #include "../include/SimpleLights.h"
 #include "../include/SimpleMaterial.h"
+#include "../include/SimpleObjects.h"
+#include "../include/SimpleScene.h"
+#include "../include/Transform.h"
 
 const char* OUTPUT_FILE_PATH = "./test.ppm";
 
@@ -62,9 +65,9 @@ Camera makeCamera(
     float fovDegrees,
     float aspectRatio
 ) {
-    glm::vec3 f = glm::normalize(eye - lookAt);
-    glm::vec3 r = glm::normalize(glm::cross(up, f));
-    glm::vec3 u = glm::cross(f, r);
+    glm::vec3 f = glm::normalize(lookAt - eye);
+    glm::vec3 r = glm::normalize(glm::cross(f, up));
+    glm::vec3 u = glm::cross(r, f);
     float fovYMultiplier = tan(glm::radians(fovDegrees / 2.0f));
     // Each pixel should be square, wo fov = (fovY / height) * width
     // Then (fovX / fovY) = width / height
@@ -84,69 +87,34 @@ Raytracing::Ray cameraViewRay(const Camera& camera, const float uvX, const float
     glm::vec3 imagePlaneIntersection = imagePlaneCenter
         + (camera.r * uvX * camera.fovXMultiplier)
         + (camera.u * uvY * camera.fovYMultiplier);
-    glm::vec3 direction = glm::normalize(camera.eye - imagePlaneIntersection);
+    glm::vec3 direction = glm::normalize(imagePlaneIntersection - camera.eye);
     Raytracing::Ray ray = { camera.eye, direction };
     return ray;
 }
 
-// TODO - Accept Scene containing objects + lights
-glm::vec3 whittedRayTrace(const Camera& camera, float uvX, float uvY) {
+glm::vec3 whittedRayTracePixelFunc(
+    const Camera& camera, 
+    const SimpleScene::Scene& scene,
+    float uvX, 
+    float uvY 
+) {
     // TODO - May need to shift Uvs by 0.5 so rays go through center of pixels instead of corners
     // Remap uvs into [-1, 1]^2
     uvX = (uvX * 2.0f) - 1.0f;
     uvY = (uvY * 2.0f) - 1.0f;
     Raytracing::Ray viewRay = cameraViewRay(camera, uvX, uvY);
 
-    // DEFINE GEOMETRY
-    Intersectables::Sphere sphere = { 0.5f, glm::vec3(0.0f, 0.0f, 0.0f) };
-
-    // DEFINE LIGHTING
-    SimpleLights::PointLight pointLight = {
-        glm::vec3(1.5f, 2.0f, -0.5f),   // Origin
-        glm::vec3(1.0f, 0.0f, 0.0f),    // Attenuation
-        glm::vec3(1.0f, 1.0f, 1.0f),    // Intensity
-        glm::vec3(0.0f, 0.0f, 0.0f),    // Ambient
-    };
-
-    SimpleMaterial::Material material = {
-        glm::vec3(1.0f, 0.0f, 0.0f),    // Diffuse
-        glm::vec3(1.0f, 1.0f, 1.0f),    // Specular
-        glm::vec3(0.1f, 0.0f, 0.0f),    // Ambient
-        glm::vec3(0.0f, 0.0f, 0.0f),    // Emission
-        64.0f                           // Shiny
-    };
-
-    // Intersect scene
-    // TODO 
-    // intersect(ray, scene)
-    Raytracing::HitInfo sphereHit = sphere.intersect(viewRay);
-
-    if (sphereHit.t > 0) {
-        // Illuminate simple material
-        // TODO - for each light in scene
-        glm::vec3 illumination = pointLight.illuminate(
-            sphereHit.p,
-            sphereHit.n, 
-            camera.eye,
-            material
-       );
-       // Shadow Ray
-       // TODO - Shadow
-
-       // Reflection Ray
-       // TODO - Reflection
-
-        return illumination + material.ambient + material.emission;
-    } else {
-        // Background color
-        return glm::vec3(0.0f, 0.0f, 1.0f);
-    }
+    return SimpleScene::whittedRayTrace(
+        viewRay, 
+        scene,
+        glm::vec3(0.0f, 0.0f, 1.0f)
+    );
 }
 
 
 int main() {
-    int width = 200;
-    int height = 100;
+    int width = 400;
+    int height = 300;
 
     // Initialize image
     std::cout << "Initialize image with shape (" << width << ", " << height << ")" << std::endl;
@@ -156,6 +124,7 @@ int main() {
         image[i] = new glm::vec3[width];
     }
 
+    // CAMERA
     Camera camera = makeCamera(
         glm::vec3(0.0f, 0.0f, 1.0f), 
         glm::vec3(0.0f, 0.0f, 0.0f),
@@ -164,8 +133,55 @@ int main() {
         (float)width / (float)height
     );
 
-    PixelFunc traceFunc = [&camera](float uvX, float uvY) {
-        return whittedRayTrace(camera, uvX, uvY);
+    // CREATE SCENE
+    SimpleScene::Scene scene = SimpleScene::Scene();
+
+    // LIGHTS
+    SimpleLights::PointLight pointLight1 = {
+        glm::vec3(1.5f, 2.0f, 0.5f),   // Origin
+        glm::vec3(1.0f, 0.0f, 0.0f),    // Attenuation
+        glm::vec3(1.0f, 1.0f, 1.0f),    // Intensity
+        glm::vec3(0.0f, 0.0f, 0.0f),    // Ambient
+    };
+    SimpleLights::PointLight pointLight2 = {
+        glm::vec3(-2.5f, 3.0f, -0.5f),   // Origin
+        glm::vec3(1.0f, 0.0f, 0.0f),    // Attenuation
+        glm::vec3(.8f, .8f, .8f),      // Intensity
+        glm::vec3(0.0f, 0.0f, 0.0f),    // Ambient
+    };
+
+    scene.addLight(&pointLight1);
+    scene.addLight(&pointLight2);
+
+    // MATERIALS
+    SimpleMaterial::Material material = {
+        glm::vec3(1.0f, 0.0f, 0.0f),    // Diffuse
+        glm::vec3(1.0f, 1.0f, 1.0f),    // Specular
+        glm::vec3(0.1f, 0.0f, 0.0f),    // Ambient
+        glm::vec3(0.0f, 0.0f, 0.0f),    // Emission
+        128.0f                           // Shiny
+    };
+
+    int redMaterial = scene.addMaterial(&material);
+
+    // OBJECTS
+    SimpleObjects::Sphere sphere1 = { 
+        0.5f,                           // Radius
+        glm::vec3(0.0f, 0.0f, 0.0f),    // Center
+        redMaterial,                    // Material
+        Transform::translate(0.5f, 0.5f, -3.0f) * Transform::scale(1.0f, 1.5f, 1.0f)
+    };
+    SimpleObjects::Sphere sphere2 = { 
+        0.5f,                           // Radius
+        glm::vec3(0.0f, 0.0f, 0.0f),    // Center
+        redMaterial,                    // Material
+        Transform::translate(-0.5f, 1.0f, -2.0f) 
+    };
+    scene.addObject(&sphere1);
+    scene.addObject(&sphere2);
+
+    PixelFunc traceFunc = [&camera, &scene](float uvX, float uvY) {
+        return whittedRayTracePixelFunc(camera, scene, uvX, uvY);
     };
 
     pixelShade(image, width, height, traceFunc);
