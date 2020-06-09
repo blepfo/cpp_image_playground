@@ -73,7 +73,8 @@ Camera makeCamera(
     float fovYMultiplier = tan(glm::radians(fovDegrees / 2.0f));
     // Each pixel should be square, wo fov = (fovY / height) * width
     // Then (fovX / fovY) = width / height
-    float fovXMultiplier = fovYMultiplier * aspectRatio;
+    float fovX = fovDegrees * aspectRatio;
+    float fovXMultiplier = tan(glm::radians(fovX / 2.0f));
     Camera camera = { eye, f, u, r, fovXMultiplier, fovYMultiplier };
     return camera;
 }
@@ -128,10 +129,10 @@ int main() {
 
     // CAMERA
     Camera camera = makeCamera(
-        glm::vec3(-1.5f, 0.5f, 1.0f), 
+        glm::vec3(-1.5f, 0.5f, 2.0f), 
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.0f, 1.0f, 0.0f),
-        90.0f,
+        60.0f,
         (float)width / (float)height
     );
 
