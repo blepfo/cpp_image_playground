@@ -39,20 +39,40 @@ class Sphere : public ::SimpleGraphics::Intersectable {
         const glm::vec3 c;
 }; 
 
+
 class Triangle : public ::SimpleGraphics::Intersectable {
     public:
         Raytracing::HitInfo intersect(const Raytracing::Ray& ray) override;
 
-        Triangle(glm::vec3* vertices, int materialId) 
-            : vertices(vertices), ::SimpleGraphics::Intersectable(materialId) {}
+        Triangle(
+            glm::vec3 A, 
+            glm::vec3 B, 
+            glm::vec3 C, 
+            int materialId
+        ) 
+            : A(A), B(B), C(C),
+            ::SimpleGraphics::Intersectable(materialId) {
+                this->normal = glm::normalize(glm::cross(C-A, B-A));
+            }
 
-        Triangle(glm::vec3* vertices, int materialId, glm::mat4 transform) 
-            : vertices(vertices), ::SimpleGraphics::Intersectable(materialId, transform) {}
+        Triangle(
+            glm::vec3 A, 
+            glm::vec3 B, 
+            glm::vec3 C, 
+            int materialId, 
+            glm::mat4 transform
+        ) 
+            : A(A), B(B), C(C),
+            ::SimpleGraphics::Intersectable(materialId, transform) {
+                this->normal = glm::normalize(glm::cross(C-A, B-A));
+            }
 
     private:
         // For now, assume vertices in clockwise orientation
+        glm::vec3 A;
+        glm::vec3 B;
+        glm::vec3 C;
         glm::vec3 normal;
-        glm::vec3* vertices;
 
 };
 

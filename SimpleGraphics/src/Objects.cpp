@@ -8,11 +8,9 @@
 namespace SimpleGraphics {
 
 ::Raytracing::HitInfo Sphere::intersect(const ::Raytracing::Ray& ray) {
-    ::Raytracing::Ray localRay = this->localRay(ray);
-
-    glm::vec3 originMinusCenter = localRay.o - this->c;
-    float a = glm::dot(localRay.d, localRay.d);
-    float b = 2.0f * glm::dot(localRay.d, originMinusCenter);
+    glm::vec3 originMinusCenter = ray.o - this->c;
+    float a = glm::dot(ray.d, ray.d);
+    float b = 2.0f * glm::dot(ray.d, originMinusCenter);
     float c = glm::dot(originMinusCenter, originMinusCenter) - (this->r * this->r);
 
     float tIntersection = -1.0f;
@@ -30,16 +28,15 @@ namespace SimpleGraphics {
     }
     if (tIntersection > 0) {
         // Compute intersection info
-        glm::vec3 intersectionLocal = localRay.o + (tIntersection * localRay.d);
-        glm::vec3 normalLocal = glm::normalize(intersectionLocal - this->c);
+        glm::vec3 intersectionPoint = ray.o + (tIntersection * ray.d);
+        glm::vec3 normal = glm::normalize(intersectionPoint - this->c);
 
-        glm::vec3 intersectionWorld = this->localPointToWorld(intersectionLocal);
-        float distanceToIntersection = glm::distance(ray.o, intersectionWorld);
+        float distanceToIntersection = glm::distance(ray.o, intersectionPoint);
 
         ::Raytracing::HitInfo intersectionInfo = {
             distanceToIntersection,                 // distance
-            intersectionWorld,                      // p
-            this->localNormalToWorld(normalLocal),  // n
+            intersectionPoint,                      // p
+            normal,                                 // n
             this->materialId                        // materialId
         };
         return intersectionInfo;
@@ -49,14 +46,47 @@ namespace SimpleGraphics {
     }
 }
 
-::Raytracing::HitInfo Triangle::intersect(const ::Raytracing::Ray& ray) {
-    // Transform ray to object space, intersect, and transform intersection to world space
-    ::Raytracing::Ray localRay = this->localRay(ray);
-    
-    // Ray-plane intersection
 
-    // TODO
-    return ::Raytracing::noHit;
+::Raytracing::HitInfo Triangle::intersect(const ::Raytracing::Ray& ray) {
+    // Ray-plane intersection using Moller-Trumbore
+    // Triangle vertices = A B C
+    // Barycentric coordinates = alpha beta gamma
+    glm::vec3 AB = this->B - this->A;
+    glm::vec3 AC = this->C - this->A;
+
+    // Reused calculations
+    glm::vec3 AO = ray.o - this->A;
+    glm::vec3 AOxAB = glm::cross(AO, AB);
+    glm::vec3 DxAC = glm::cross(ray.d, AC);
+    
+    float totalDeterminant = glm::dot(DxAC, AB);
+    // If determinant is 0, unabel to solve system
+    if (std::abs(totalDeterminant) < 0.01) {
+        return ::Raytracing::noHit;
+    }
+
+    // TODO backface culling based on determinant sign
+    float invTotalDeterminant = 1.0f / totalDeterminant;
+
+    float t = invTotalDeterminant * glm::dot(AOxAB, AC);
+    if (t < 0.0f) return ::Raytracing::noHit;
+
+    float beta = invTotalDeterminant * glm::dot(DxAC, AO);
+    if (beta < 0.0f || beta > 1.0f) return ::Raytracing::noHit;
+
+    float gamma = invTotalDeterminant * glm::dot(AOxAB, ray.d);
+    if (gamma < 0.0f || gamma + beta > 1.0f) return ::Raytracing::noHit;
+
+    // If we reach here, found forward intersection inside the triangle
+    glm::vec3 intersectionPoint = ray.o + (t * ray.d);
+    float intersectionDistance = glm::distance(ray.o, intersectionPoint);
+    ::Raytracing::HitInfo triangleHit = {
+        intersectionDistance,               // distance
+        intersectionPoint,                  // p
+        this->normal,                       // n
+        this->materialId                    // material
+    };
+    return triangleHit;
 }
 
 

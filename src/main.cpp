@@ -128,10 +128,10 @@ int main() {
 
     // CAMERA
     Camera camera = makeCamera(
-        glm::vec3(0.0f, 0.0f, 1.0f), 
+        glm::vec3(0.0f, 1.0f, 1.0f), 
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.0f, 1.0f, 0.0f),
-        60.0f,
+        90.0f,
         (float)width / (float)height
     );
 
@@ -147,8 +147,8 @@ int main() {
     };
     SimpleGraphics::PointLight pointLight2 = {
         glm::vec3(-2.5f, 3.0f, -0.5f),   // Origin
-        glm::vec3(1.0f, 0.0f, 0.0f),    // Attenuation
-        glm::vec3(.8f, .8f, .8f),      // Intensity
+        glm::vec3(1.0f, 0.0f, 0.0f),     // Attenuation
+        glm::vec3(.8f, .8f, .8f),       // Intensity
         glm::vec3(0.0f, 0.0f, 0.0f),    // Ambient
     };
 
@@ -156,7 +156,7 @@ int main() {
     scene.addLight(&pointLight2);
 
     // MATERIALS
-    SimpleGraphics::Material material = {
+    SimpleGraphics::Material redMat = {
         glm::vec3(1.0f, 0.0f, 0.0f),    // Diffuse
         glm::vec3(1.0f, 1.0f, 1.0f),    // Specular
         glm::vec3(0.1f, 0.0f, 0.0f),    // Ambient
@@ -164,23 +164,43 @@ int main() {
         128.0f                           // Shiny
     };
 
-    int redMaterial = scene.addMaterial(&material);
+    SimpleGraphics::Material greyMat = {
+        glm::vec3(0.2f, 0.2f, 0.3f),
+        glm::vec3(1.0f),
+        glm::vec3(0.1f),
+        glm::vec3(0.0f),
+        64.0f
+    };
+
+    int redMaterial = scene.addMaterial(&redMat);
+    int greyMaterial = scene.addMaterial(&greyMat);
 
     // OBJECTS
     SimpleGraphics::Sphere sphere1 = { 
         0.5f,                           // Radius
         glm::vec3(0.0f, 0.0f, 0.0f),    // Center
         redMaterial,                    // Material
-        Transform::translate(0.5f, 0.5f, -3.0f) * Transform::scale(1.0f, 2.0f, 1.0f)
+        Transform::scale(1.0f, 2.0f, 1.0f)
     };
+
     SimpleGraphics::Sphere sphere2 = { 
         0.5f,                           // Radius
         glm::vec3(0.0f, 0.0f, 0.0f),    // Center
         redMaterial,                    // Material
-        Transform::translate(-0.5f, 1.0f, -2.0f) 
+        Transform::translate(-0.5f, 0.5f, -0.7f) 
     };
+
+    SimpleGraphics::Triangle tri1 = {
+        glm::vec3(2.0f, 0.0f, 0.0f),
+        glm::vec3(2.0f, 0.0f, -2.0f),
+        glm::vec3(0.0f, 0.0f, -2.0f),
+        greyMaterial,
+        Transform::translate(0.0f, 0.0f, 0.0f) 
+    };
+
     scene.addObject(&sphere1);
     scene.addObject(&sphere2);
+    scene.addObject(&tri1);
 
     PixelFunc traceFunc = [&camera, &scene](float uvX, float uvY) {
         return whittedRayTracePixelFunc(camera, scene, uvX, uvY);

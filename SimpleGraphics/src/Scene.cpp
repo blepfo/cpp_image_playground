@@ -15,13 +15,27 @@ namespace SimpleGraphics {
     ::Raytracing::HitInfo sceneHit = ::Raytracing::noHit;
     ::SimpleGraphics::Intersectable* hitObject = NULL;
     for (int objectNum = 0; objectNum < scene.objects.size(); objectNum++) {
-        ::Raytracing::HitInfo currentHit = scene.objects[objectNum]->intersect(ray);
+        ::SimpleGraphics::Intersectable* currentObject = scene.objects[objectNum];
+        // Intersect in local space, then transform back to world space
+        ::Raytracing::Ray localRay = currentObject->localRay(ray);
+        ::Raytracing::HitInfo localHit = currentObject->intersect(localRay);
 
-        if (currentHit.distance < 0) continue;
-        else if (sceneHit.distance < 0 || (currentHit.distance < sceneHit.distance)) {
-            // Found first forward intersection OR found closer forward intersection
-            sceneHit = currentHit;
-            hitObject = scene.objects[objectNum];
+        if (localHit.distance < 0) continue;
+        else {
+            // Convert from local space to world space
+            glm::vec3 worldIntersectionPoint = currentObject->localPointToWorld(localHit.p);
+            float intersectionDistance = glm::distance(worldIntersectionPoint, ray.o);
+            ::Raytracing::HitInfo worldHit = {
+                intersectionDistance,
+                worldIntersectionPoint,
+                currentObject->localNormalToWorld(localHit.n),
+                localHit.materialId
+            };
+            if (sceneHit.distance < 0 || (intersectionDistance < sceneHit.distance)) {
+                // Found first forward intersection OR found closer forward intersection
+                sceneHit = worldHit;
+                hitObject = currentObject;
+            }
         }
     }
     return sceneHit;
