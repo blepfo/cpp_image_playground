@@ -8,7 +8,7 @@
 #include "Raytracing.hpp"
 
 #include "SimpleGraphics/Lights.hpp"
-#include "SimpleGraphics/Material.hpp"
+#include "SimpleGraphics/Materials.hpp"
 #include "SimpleGraphics/Objects.hpp"
 
 namespace SimpleGraphics {

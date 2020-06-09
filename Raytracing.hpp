@@ -22,7 +22,7 @@ namespace Raytracing {
 
     class RayIntersectable : public SceneObject {
         public:
-            virtual HitInfo intersect(const Ray& r) = 0;
+            virtual HitInfo intersect(const Ray& r) const = 0;
             glm::mat4 transform;
 
             void setTransform(const glm::mat4 transform) {
@@ -37,7 +37,7 @@ namespace Raytracing {
                 this->transform = toLeftMultiply * this->transform;
             }
 
-            Ray localRay(const Ray& worldRay) {
+            Ray localRay(const Ray& worldRay) const {
                 // To intersect transformed object, we transform ray into local space,
                 // do intersection, then transform back to world space
                 glm::mat4 worldToLocal = glm::inverse(this->transform);
@@ -48,12 +48,12 @@ namespace Raytracing {
                 return localRay;
             }
 
-            glm::vec3 localPointToWorld(const glm::vec3 pLocal) {
+            glm::vec3 localPointToWorld(const glm::vec3 pLocal) const {
                 glm::vec4 pWorld = this->transform * glm::vec4(pLocal, 1.0f);
                 return glm::vec3(pWorld) / pWorld[3];
             }
 
-            glm::vec3 localNormalToWorld(const glm::vec3 nLocal) {
+            glm::vec3 localNormalToWorld(const glm::vec3 nLocal) const {
                 glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(this->transform)));
                 return glm::normalize(normalMatrix * nLocal);
             }

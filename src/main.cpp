@@ -13,7 +13,7 @@
 #include "Transform.hpp"
 
 #include "SimpleGraphics/Lights.hpp"
-#include "SimpleGraphics/Material.hpp"
+#include "SimpleGraphics/Materials.hpp"
 #include "SimpleGraphics/Objects.hpp"
 #include "SimpleGraphics/Scene.hpp"
 
@@ -142,14 +142,14 @@ int main() {
     // LIGHTS
     SimpleGraphics::PointLight pointLight1 = {
         glm::vec3(1.5f, 2.0f, 0.5f),   // Origin
-        glm::vec3(1.0f, 0.0f, 0.0f),    // Attenuation
-        glm::vec3(0.6f),                // Intensity
+        glm::vec3(0.0f, 0.0f, 1.0f),    // Attenuation
+        glm::vec3(7.5f),                // Intensity
         glm::vec3(0.0f, 0.0f, 0.0f),    // Ambient
     };
     SimpleGraphics::PointLight pointLight2 = {
         glm::vec3(-2.5f, 3.0f, -0.5f),   // Origin
-        glm::vec3(1.0f, 0.0f, 0.0f),     // Attenuation
-        glm::vec3(.8f, .8f, .8f),       // Intensity
+        glm::vec3(0.0f, 0.0f, 1.0f),     // Attenuation
+        glm::vec3(10.0f),                // Intensity
         glm::vec3(0.0f, 0.0f, 0.0f),    // Ambient
     };
 
@@ -157,7 +157,7 @@ int main() {
     scene.addLight(&pointLight2);
 
     // MATERIALS
-    SimpleGraphics::Material redMat = {
+    SimpleGraphics::StaticMaterial redMat = {
         glm::vec3(1.0f, 0.0f, 0.0f),    // Diffuse
         glm::vec3(1.0f, 1.0f, 1.0f),    // Specular
         glm::vec3(0.1f, 0.0f, 0.0f),    // Ambient
@@ -165,16 +165,17 @@ int main() {
         128.0f                           // Shiny
     };
 
-    SimpleGraphics::Material greyMat = {
-        glm::vec3(0.2f, 0.2f, 0.3f),
-        glm::vec3(1.0f),
-        glm::vec3(0.1f),
-        glm::vec3(0.0f),
-        64.0f
+    SimpleGraphics::CheckerboardXZ planeMat = {
+        2.0f, 2.0f,         // scaleX, scaleY
+        0.1f,               // ambientMultiplier
+        glm::vec3(0.9f),    // oddColor
+        glm::vec3(0.1f),    // evenColor
+        glm::vec3(0.99f),   // Specular
+        64.0f               // Shiny
     };
 
     int redMaterial = scene.addMaterial(&redMat);
-    int greyMaterial = scene.addMaterial(&greyMat);
+    int planeMaterial = scene.addMaterial(&planeMat);
 
     // OBJECTS
     SimpleGraphics::Sphere sphere1 = { 
@@ -191,19 +192,19 @@ int main() {
         Transform::translate(-0.5f, 0.5f, -0.7f) 
     };
 
-    glm::mat4 planeTransform = Transform::translate(-1.0f, -0.2f, 1.0f);
+    glm::mat4 planeTransform = Transform::translate(-2.5f, -0.5f, 1.0f);
     SimpleGraphics::Triangle tri1 = {
-        glm::vec3(2.0f, 0.0f, 0.0f),
-        glm::vec3(2.0f, 0.0f, -2.0f),
+        glm::vec3(5.0f, 0.0f, 0.0f),
+        glm::vec3(5.0f, 0.0f, -5.0f),
         glm::vec3(0.0f, 0.0f, 0.0f),
-        greyMaterial,
-        planeTransform,
+        planeMaterial,
+        planeTransform
     };
     SimpleGraphics::Triangle tri2 = {
         glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(2.0f, 0.0f, -2.0f),
-        glm::vec3(0.0f, 0.0f, -2.0f),
-        greyMaterial,
+        glm::vec3(5.0f, 0.0f, -5.0f),
+        glm::vec3(0.0f, 0.0f, -5.0f),
+        planeMaterial,
         planeTransform
     };
 

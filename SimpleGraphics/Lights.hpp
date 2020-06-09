@@ -4,7 +4,7 @@
 
 #include<glm/glm.hpp>
 
-#include "SimpleGraphics/Material.hpp"
+#include "SimpleGraphics/Materials.hpp"
 
 namespace SimpleGraphics {
 
@@ -15,10 +15,10 @@ class Light {
             glm::vec3 n,
             glm::vec3 eye,
             const ::SimpleGraphics::Material* material
-        ) = 0;
+        ) const = 0;
 
-        virtual float getDistance(const glm::vec3 p) = 0;
-        virtual glm::vec3 getDirection(const glm::vec3 p) = 0;
+        virtual float getDistance(const glm::vec3 p) const = 0;
+        virtual glm::vec3 getDirection(const glm::vec3 p) const = 0;
 
         glm::vec3 i;    // Intensity
         glm::vec3 ambient;
@@ -35,16 +35,16 @@ class PointLight : public ::SimpleGraphics::Light {
             glm::vec3 n,
             glm::vec3 eye,
             const ::SimpleGraphics::Material* material
-        ) override;
+        ) const override;
         
         glm::vec3 o;    // Origin
         glm::vec3 attenuation;
 
-        glm::vec3 getDirection(const glm::vec3 p) override {
+        glm::vec3 getDirection(const glm::vec3 p) const override {
             return glm::normalize(this->o - p);
         }
 
-        float getDistance(const glm::vec3 p) override {
+        float getDistance(const glm::vec3 p) const override {
             return glm::distance(p, this->o);
         }
 
@@ -59,15 +59,15 @@ class DirectionLight : public ::SimpleGraphics::Light {
             glm::vec3 n,
             glm::vec3 eye,
             const ::SimpleGraphics::Material* material
-        ) override;
+        ) const override;
 
         glm::vec3 d;    // Direction
 
-        glm::vec3 getDirection(const glm::vec3 p) override {
+        glm::vec3 getDirection(const glm::vec3 p) const override {
             return this->d;
         }
 
-        float getDistance(const glm::vec3 p) override {
+        float getDistance(const glm::vec3 p) const override {
             return std::numeric_limits<float>::infinity();
         }
 

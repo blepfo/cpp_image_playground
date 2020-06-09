@@ -4,7 +4,7 @@
 #include "Raytracing.hpp"
 
 #include "SimpleGraphics/Lights.hpp"
-#include "SimpleGraphics/Material.hpp"
+#include "SimpleGraphics/Materials.hpp"
 #include "SimpleGraphics/Objects.hpp"
 #include "SimpleGraphics/Scene.hpp"
 
@@ -68,7 +68,7 @@ glm::vec3 whittedRayTrace(
     if (sceneHit.distance > 0) {
         // Get material for object
         ::SimpleGraphics::Material* material = scene.materials[sceneHit.materialId];
-        glm::vec3 illumination = material->ambient + material->emission;
+        glm::vec3 illumination = material->ambient(sceneHit.p) + material->emission(sceneHit.p);
         for (int lightNum = 0; lightNum < scene.lights.size(); lightNum++) {
             // Determine visibility using Shadow Ray
             ::SimpleGraphics::Light* currentLight = scene.lights[lightNum];

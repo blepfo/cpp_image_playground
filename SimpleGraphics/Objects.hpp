@@ -2,8 +2,6 @@
 
 #include<glm/glm.hpp>
 
-#include "SimpleGraphics/Material.hpp"
-
 namespace SimpleGraphics {
 
 /** 
@@ -26,7 +24,7 @@ class Intersectable : public Raytracing::RayIntersectable {
 
 class Sphere : public ::SimpleGraphics::Intersectable {
     public:
-        Raytracing::HitInfo intersect(const Raytracing::Ray& ray) override; 
+        Raytracing::HitInfo intersect(const Raytracing::Ray& ray) const override; 
 
         Sphere(float r, glm::vec3 c, int materialId) 
             : r(r), c(c), ::SimpleGraphics::Intersectable(materialId) {}
@@ -42,7 +40,7 @@ class Sphere : public ::SimpleGraphics::Intersectable {
 
 class Triangle : public ::SimpleGraphics::Intersectable {
     public:
-        Raytracing::HitInfo intersect(const Raytracing::Ray& ray) override;
+        Raytracing::HitInfo intersect(const Raytracing::Ray& ray) const override;
 
         Triangle(
             glm::vec3 A, 

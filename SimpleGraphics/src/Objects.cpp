@@ -7,7 +7,7 @@
 
 namespace SimpleGraphics {
 
-::Raytracing::HitInfo Sphere::intersect(const ::Raytracing::Ray& ray) {
+::Raytracing::HitInfo Sphere::intersect(const ::Raytracing::Ray& ray) const {
     glm::vec3 originMinusCenter = ray.o - this->c;
     float a = glm::dot(ray.d, ray.d);
     float b = 2.0f * glm::dot(ray.d, originMinusCenter);
@@ -47,7 +47,7 @@ namespace SimpleGraphics {
 }
 
 
-::Raytracing::HitInfo Triangle::intersect(const ::Raytracing::Ray& ray) {
+::Raytracing::HitInfo Triangle::intersect(const ::Raytracing::Ray& ray) const {
     // Ray-plane intersection using Moller-Trumbore
     // Triangle vertices = A B C
     // Barycentric coordinates = alpha beta gamma
