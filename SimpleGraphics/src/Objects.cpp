@@ -64,8 +64,11 @@ namespace SimpleGraphics {
     if (std::abs(totalDeterminant) < 0.01) {
         return ::Raytracing::noHit;
     }
+    // Backface culling
+    if (totalDeterminant < 0.0f) {
+        return ::Raytracing::noHit;
+    }
 
-    // TODO backface culling based on determinant sign
     float invTotalDeterminant = 1.0f / totalDeterminant;
 
     float t = invTotalDeterminant * glm::dot(AOxAB, AC);

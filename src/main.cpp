@@ -128,7 +128,7 @@ int main() {
 
     // CAMERA
     Camera camera = makeCamera(
-        glm::vec3(0.0f, 1.0f, 1.0f), 
+        glm::vec3(-1.5f, 0.5f, 1.0f), 
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.0f, 1.0f, 0.0f),
         90.0f,
@@ -190,17 +190,26 @@ int main() {
         Transform::translate(-0.5f, 0.5f, -0.7f) 
     };
 
+    glm::mat4 planeTransform = Transform::translate(-1.0f, -0.2f, 1.0f);
     SimpleGraphics::Triangle tri1 = {
         glm::vec3(2.0f, 0.0f, 0.0f),
         glm::vec3(2.0f, 0.0f, -2.0f),
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        greyMaterial,
+        planeTransform,
+    };
+    SimpleGraphics::Triangle tri2 = {
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(2.0f, 0.0f, -2.0f),
         glm::vec3(0.0f, 0.0f, -2.0f),
         greyMaterial,
-        Transform::translate(0.0f, 0.0f, 0.0f) 
+        planeTransform
     };
 
     scene.addObject(&sphere1);
     scene.addObject(&sphere2);
     scene.addObject(&tri1);
+    scene.addObject(&tri2);
 
     PixelFunc traceFunc = [&camera, &scene](float uvX, float uvY) {
         return whittedRayTracePixelFunc(camera, scene, uvX, uvY);

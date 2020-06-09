@@ -52,7 +52,7 @@ class Triangle : public ::SimpleGraphics::Intersectable {
         ) 
             : A(A), B(B), C(C),
             ::SimpleGraphics::Intersectable(materialId) {
-                this->normal = glm::normalize(glm::cross(C-A, B-A));
+                this->normal = glm::normalize(glm::cross(B-A, C-A));
             }
 
         Triangle(
@@ -64,7 +64,7 @@ class Triangle : public ::SimpleGraphics::Intersectable {
         ) 
             : A(A), B(B), C(C),
             ::SimpleGraphics::Intersectable(materialId, transform) {
-                this->normal = glm::normalize(glm::cross(C-A, B-A));
+                this->normal = glm::normalize(glm::cross(B-A, C-A));
             }
 
     private:
