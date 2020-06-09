@@ -7,13 +7,15 @@
 
 #include<glm/glm.hpp>
 
-#include "../include/Raytracing.h"
-#include "../include/save_utils.h"
-#include "../include/SimpleLights.h"
-#include "../include/SimpleMaterial.h"
-#include "../include/SimpleObjects.h"
-#include "../include/SimpleScene.h"
-#include "../include/Transform.h"
+// TODO
+#include "Raytracing.hpp"
+#include "SaveUtils.hpp"
+#include "Transform.hpp"
+
+#include "SimpleGraphics/Lights.hpp"
+#include "SimpleGraphics/Material.hpp"
+#include "SimpleGraphics/Objects.hpp"
+#include "SimpleGraphics/Scene.hpp"
 
 const char* OUTPUT_FILE_PATH = "./test.ppm";
 
@@ -94,7 +96,7 @@ Raytracing::Ray cameraViewRay(const Camera& camera, const float uvX, const float
 
 glm::vec3 whittedRayTracePixelFunc(
     const Camera& camera, 
-    const SimpleScene::Scene& scene,
+    const SimpleGraphics::Scene& scene,
     float uvX, 
     float uvY 
 ) {
@@ -104,7 +106,7 @@ glm::vec3 whittedRayTracePixelFunc(
     uvY = (uvY * 2.0f) - 1.0f;
     Raytracing::Ray viewRay = cameraViewRay(camera, uvX, uvY);
 
-    return SimpleScene::whittedRayTrace(
+    return SimpleGraphics::whittedRayTrace(
         viewRay, 
         scene,
         glm::vec3(0.0f, 0.0f, 1.0f)
@@ -134,16 +136,16 @@ int main() {
     );
 
     // CREATE SCENE
-    SimpleScene::Scene scene = SimpleScene::Scene();
+    SimpleGraphics::Scene scene = SimpleGraphics::Scene();
 
     // LIGHTS
-    SimpleLights::PointLight pointLight1 = {
+    SimpleGraphics::PointLight pointLight1 = {
         glm::vec3(1.5f, 2.0f, 0.5f),   // Origin
         glm::vec3(1.0f, 0.0f, 0.0f),    // Attenuation
         glm::vec3(0.6f),                // Intensity
         glm::vec3(0.0f, 0.0f, 0.0f),    // Ambient
     };
-    SimpleLights::PointLight pointLight2 = {
+    SimpleGraphics::PointLight pointLight2 = {
         glm::vec3(-2.5f, 3.0f, -0.5f),   // Origin
         glm::vec3(1.0f, 0.0f, 0.0f),    // Attenuation
         glm::vec3(.8f, .8f, .8f),      // Intensity
@@ -154,7 +156,7 @@ int main() {
     scene.addLight(&pointLight2);
 
     // MATERIALS
-    SimpleMaterial::Material material = {
+    SimpleGraphics::Material material = {
         glm::vec3(1.0f, 0.0f, 0.0f),    // Diffuse
         glm::vec3(1.0f, 1.0f, 1.0f),    // Specular
         glm::vec3(0.1f, 0.0f, 0.0f),    // Ambient
@@ -165,13 +167,13 @@ int main() {
     int redMaterial = scene.addMaterial(&material);
 
     // OBJECTS
-    SimpleObjects::Sphere sphere1 = { 
+    SimpleGraphics::Sphere sphere1 = { 
         0.5f,                           // Radius
         glm::vec3(0.0f, 0.0f, 0.0f),    // Center
         redMaterial,                    // Material
         Transform::translate(0.5f, 0.5f, -3.0f) * Transform::scale(1.0f, 2.0f, 1.0f)
     };
-    SimpleObjects::Sphere sphere2 = { 
+    SimpleGraphics::Sphere sphere2 = { 
         0.5f,                           // Radius
         glm::vec3(0.0f, 0.0f, 0.0f),    // Center
         redMaterial,                    // Material

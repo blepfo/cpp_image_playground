@@ -1,6 +1,6 @@
 #pragma once
 
-namespace SimpleMaterial {
+namespace SimpleGraphics {
 
 class Material {
 	public:

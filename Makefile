@@ -1,49 +1,66 @@
 SRC=./src
 INC=./include
-OBJ=./obj
+BUILD=./build
 BIN=./bin
+
+
+SG=SimpleGraphics
+SG_SRC=$(SG)/src
+SG_BUILD=$(SG)/build
+
 
 CC=g++ -std=c++17
 
 
 all: $(BIN)/main.o
 
-$(BIN)/main.o: $(SRC)/main.cpp $(OBJ)/save_utils.o $(OBJ)/SimpleObjects.o $(OBJ)/SimpleLights.o $(OBJ)/SimpleScene.o $(OBJ)/Transform.o $(INC)/SimpleMaterial.h
+$(BIN)/main.o: $(SRC)/main.cpp $(BUILD)/SaveUtils.o $(SG_BUILD)/Lights.o $(SG_BUILD)/Objects.o $(SG_BUILD)/Scene.o $(BUILD)/Transform.o $(SG)/Material.hpp ./Raytracing.hpp
+	# TODO - replace -I./ with dir containing Raytracing.hpp
 	$(info $@)
 	$(CC) \
     -I/usr/local/include \
-	$(OBJ)/SimpleLights.o \
-	$(OBJ)/SimpleObjects.o \
-    $(OBJ)/SimpleScene.o \
-	$(OBJ)/save_utils.o \
-    $(OBJ)/Transform.o \
+	-I./ \
+	$(SG_BUILD)/Lights.o \
+	$(SG_BUILD)/Objects.o \
+    $(SG_BUILD)/Scene.o \
+	$(BUILD)/SaveUtils.o \
+    $(BUILD)/Transform.o \
 	-o $@ $<
 
-$(OBJ)/SimpleLights.o: $(SRC)/SimpleLights.cpp $(INC)/SimpleLights.h $(INC)/SimpleMaterial.h
+$(SG_BUILD)/Lights.o: $(SG_SRC)/Lights.cpp $(SG)/Lights.hpp $(SG)/Material.hpp ./Raytracing.hpp
+	# TODO - replace -I./ with dir containing Raytracing.hpp
 	$(info $@)
 	$(CC) -c \
 	-I/usr/local/include \
+	-I./ \
 	-o $@ $<
 
-$(OBJ)/SimpleObjects.o: $(SRC)/SimpleObjects.cpp $(INC)/SimpleObjects.h $(INC)/Raytracing.h
+$(SG_BUILD)/Objects.o: $(SG_SRC)/Objects.cpp $(SG)/Objects.hpp ./Raytracing.hpp
+	# TODO - replace -I./ with dir containing Raytracing.hpp
 	$(info $@)
 	$(CC) -c \
 	-I/usr/local/include \
+	-I./ \
 	-o $@ $<
 
-$(OBJ)/SimpleScene.o: $(SRC)/SimpleScene.cpp $(INC)/SimpleScene.h $(INC)/SimpleMaterial.h $(INC)/SimpleLights.h $(INC)/Raytracing.h
+$(SG_BUILD)/Scene.o: $(SG_SRC)/Scene.cpp $(SG)/Lights.hpp $(SG)/Material.hpp $(SG)/Objects.hpp ./Raytracing.hpp
+	# TODO - replace -I./ with dir containing Raytracing.hpp
 	$(info $@)
 	$(CC) -c \
 	-I/usr/local/include \
+	-I./ \
 	-o $@ $<
 
-$(OBJ)/%.o: $(SRC)/%.cpp $(INC)/%.h
+
+$(BUILD)/%.o: $(SRC)/%.cpp ./%.hpp
+	# TODO - replace -I./ with dir containing Raytracing.hpp
 	$(info $@)
 	$(CC) -c \
 	-I/usr/local/include \
+	-I./ \
 	-o $@ $<
 
 
 .PHONY clean:
-	rm $(OBJ)/*.o
+	rm $(BUILD)/*.o
 	rm $(BIN)/*

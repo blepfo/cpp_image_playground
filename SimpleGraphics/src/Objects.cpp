@@ -1,12 +1,14 @@
 #include<algorithm>
 
-#include "../include/SimpleObjects.h"
-#include "../include/Raytracing.h"
+// TODO
+#include "Raytracing.hpp"
 
-namespace SimpleObjects {
+#include "SimpleGraphics/Objects.hpp"
 
-Raytracing::HitInfo Sphere::intersect(const Raytracing::Ray& ray) {
-    Raytracing::Ray localRay = this->localRay(ray);
+namespace SimpleGraphics {
+
+::Raytracing::HitInfo Sphere::intersect(const ::Raytracing::Ray& ray) {
+    ::Raytracing::Ray localRay = this->localRay(ray);
 
     glm::vec3 originMinusCenter = localRay.o - this->c;
     float a = glm::dot(localRay.d, localRay.d);
@@ -17,7 +19,7 @@ Raytracing::HitInfo Sphere::intersect(const Raytracing::Ray& ray) {
     float discriminant = (b*b) - (4.0f * a * c);
     if (discriminant < 0) {
         // Ray does not intersect sphere (forward or backward)
-        return Raytracing::noHit;
+        return ::Raytracing::noHit;
     } else {
         // Intersection
         float t1 = (-b + sqrt(discriminant)) / (2.0f * a);
@@ -34,7 +36,7 @@ Raytracing::HitInfo Sphere::intersect(const Raytracing::Ray& ray) {
         glm::vec3 intersectionWorld = this->localPointToWorld(intersectionLocal);
         float distanceToIntersection = glm::distance(ray.o, intersectionWorld);
 
-        Raytracing::HitInfo intersectionInfo = {
+        ::Raytracing::HitInfo intersectionInfo = {
             distanceToIntersection,                 // distance
             intersectionWorld,                      // p
             this->localNormalToWorld(normalLocal),  // n
@@ -43,9 +45,19 @@ Raytracing::HitInfo Sphere::intersect(const Raytracing::Ray& ray) {
         return intersectionInfo;
     } else {
         // Only reach here if the intersection is behind the camera (t1 < 0 && t2 < 0)
-        return Raytracing::noHit;
+        return ::Raytracing::noHit;
     }
 }
 
+::Raytracing::HitInfo Triangle::intersect(const ::Raytracing::Ray& ray) {
+    // Transform ray to object space, intersect, and transform intersection to world space
+    ::Raytracing::Ray localRay = this->localRay(ray);
+    
+    // Ray-plane intersection
 
-} // namespace Intersectables
+    // TODO
+    return ::Raytracing::noHit;
+}
+
+
+} // namespace SimpleGraphics

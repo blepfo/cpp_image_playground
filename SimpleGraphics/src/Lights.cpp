@@ -2,10 +2,10 @@
 
 #include<glm/glm.hpp>
 
-#include "../include/SimpleLights.h"
-#include "../include/SimpleMaterial.h"
+#include "SimpleGraphics/Lights.hpp"
+#include "SimpleGraphics/Material.hpp"
 
-namespace SimpleLights {
+namespace SimpleGraphics {
 
 // Helper reused by PointLight and DirectionLight
 glm::vec3 illuminate(
@@ -14,7 +14,7 @@ glm::vec3 illuminate(
     glm::vec3 p,
     glm::vec3 n, 
     glm::vec3 eye,
-    const SimpleMaterial::Material* material
+    const ::SimpleGraphics::Material* material
 );
 
 // TODO - doc
@@ -22,13 +22,13 @@ glm::vec3 PointLight::illuminate(
     glm::vec3 p,
     glm::vec3 n,
     glm::vec3 eye,
-    const SimpleMaterial::Material* material
+    const ::SimpleGraphics::Material* material
 ) {
     glm::vec3 lightDir = glm::normalize(this->o - p);
     float lightDist = glm::distance(p, this->o);
     float attenuation = 1.0f / (this->attenuation[0] + (this->attenuation[1] * lightDist) + (this->attenuation[2] * lightDist * lightDist));
     glm::vec3 effectiveIntensity = this->i * attenuation;
-    return ::SimpleLights::illuminate(effectiveIntensity, lightDir, p, n, eye, material);
+    return ::SimpleGraphics::illuminate(effectiveIntensity, lightDir, p, n, eye, material);
 }
 
 // TODO - doc
@@ -36,9 +36,9 @@ glm::vec3 DirectionLight::illuminate(
     glm::vec3 p,
     glm::vec3 n,
     glm::vec3 eye,
-    const SimpleMaterial::Material* material
+    const ::SimpleGraphics::Material* material
 ) {
-    return ::SimpleLights::illuminate(this->i, this->d, p, n, eye, material);
+    return ::SimpleGraphics::illuminate(this->i, this->d, p, n, eye, material);
 }
 
 /** 
@@ -50,7 +50,7 @@ glm::vec3 illuminate(
     glm::vec3 p,
     glm::vec3 n,
     glm::vec3 eye,
-    const SimpleMaterial::Material* material
+    const SimpleGraphics::Material* material
 ) {
     // Diffuse
     float intensity_diffuse = std::max(0.0f, glm::dot(lightDir, n));
@@ -65,4 +65,4 @@ glm::vec3 illuminate(
 }
 
 
-} // namespace SimpleLights
+} // namespace SimpleGraphics

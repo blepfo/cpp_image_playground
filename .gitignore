@@ -1,4 +1,5 @@
 *.o
+*.swp
 obj/
 bin/
 .DS_STORE
