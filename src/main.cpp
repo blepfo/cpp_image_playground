@@ -12,6 +12,7 @@
 #include "SaveUtils.hpp"
 #include "Transform.hpp"
 
+#include "SimpleGraphics/Camera.hpp"
 #include "SimpleGraphics/Lights.hpp"
 #include "SimpleGraphics/Materials.hpp"
 #include "SimpleGraphics/Objects.hpp"
@@ -19,53 +20,8 @@
 
 const char* OUTPUT_FILE_PATH = "./test.ppm";
 
-typedef struct {
-    glm::vec3 eye;
-    glm::vec3 f;    // Forward
-    glm::vec3 u;    // Up
-    glm::vec3 r;    // Right
-    float fovXMultiplier;
-    float fovYMultiplier;
-} Camera;
-
-Camera makeCamera(
-    const glm::vec3 eye, 
-    const glm::vec3 lookAt, 
-    const glm::vec3 up,
-    // TODO - separate fovX and fovY
-    float fovDegrees,
-    float aspectRatio
-) {
-    glm::vec3 f = glm::normalize(lookAt - eye);
-    glm::vec3 r = glm::normalize(glm::cross(f, up));
-    glm::vec3 u = glm::cross(r, f);
-    float fovYMultiplier = tan(glm::radians(fovDegrees / 2.0f));
-    // Each pixel should be square, wo fov = (fovY / height) * width
-    // Then (fovX / fovY) = width / height
-    float fovX = fovDegrees * aspectRatio;
-    float fovXMultiplier = tan(glm::radians(fovX / 2.0f));
-    Camera camera = { eye, f, u, r, fovXMultiplier, fovYMultiplier };
-    return camera;
-}
-
-/** 
- * @param camera - Camera 
- * @param fovDegrees
- * @param uvX - X coordinate of image in [-1, 1]
- * @param uvY - Y coordinate of image in [-1, 1]
- */
-Raytracing::Ray cameraViewRay(const Camera& camera, const float uvX, const float uvY) {
-    glm::vec3 imagePlaneCenter = camera.eye + camera.f;
-    glm::vec3 imagePlaneIntersection = imagePlaneCenter
-        + (camera.r * uvX * camera.fovXMultiplier)
-        + (camera.u * uvY * camera.fovYMultiplier);
-    glm::vec3 direction = glm::normalize(imagePlaneIntersection - camera.eye);
-    Raytracing::Ray ray = { camera.eye, direction };
-    return ray;
-}
-
 glm::vec3 whittedRayTracePixelFunc(
-    const Camera& camera, 
+    const SimpleGraphics::Camera& camera, 
     const SimpleGraphics::Scene& scene,
     const int maxBounces,
     float uvX, 
@@ -75,7 +31,7 @@ glm::vec3 whittedRayTracePixelFunc(
     // Remap uvs into [-1, 1]^2
     uvX = (uvX * 2.0f) - 1.0f;
     uvY = (uvY * 2.0f) - 1.0f;
-    Raytracing::Ray viewRay = cameraViewRay(camera, uvX, uvY);
+    Raytracing::Ray viewRay = camera.viewRay(uvX, uvY);
 
     return SimpleGraphics::whittedRayTrace(
         viewRay, 
@@ -100,7 +56,7 @@ int main() {
     }
 
     // CAMERA
-    Camera camera = makeCamera(
+    SimpleGraphics::Camera camera = SimpleGraphics::Camera(
         glm::vec3(-1.5f, 0.5f, 2.0f), 
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.0f, 1.0f, 0.0f),

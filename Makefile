@@ -14,12 +14,13 @@ CC=g++ -std=c++17
 
 all: $(BIN)/main.o
 
-$(BIN)/main.o: $(SRC)/main.cpp $(BUILD)/PixelDraw.o $(BUILD)/SaveUtils.o $(BUILD)/Transform.o $(SG_BUILD)/Lights.o $(SG_BUILD)/Objects.o $(SG_BUILD)/Scene.o $(SG)/Materials.hpp ./Raytracing.hpp
+$(BIN)/main.o: $(SRC)/main.cpp $(BUILD)/PixelDraw.o $(BUILD)/SaveUtils.o $(BUILD)/Transform.o $(SG_BUILD)/Camera.o $(SG_BUILD)/Lights.o $(SG_BUILD)/Objects.o $(SG_BUILD)/Scene.o $(SG)/Materials.hpp ./Raytracing.hpp
 	# TODO - replace -I./ with dir containing Raytracing.hpp
 	$(info $@)
 	$(CC) \
     -I/usr/local/include \
 	-I./ \
+	$(SG_BUILD)/Camera.o \
 	$(SG_BUILD)/Lights.o \
 	$(SG_BUILD)/Objects.o \
     $(SG_BUILD)/Scene.o \
@@ -28,8 +29,14 @@ $(BIN)/main.o: $(SRC)/main.cpp $(BUILD)/PixelDraw.o $(BUILD)/SaveUtils.o $(BUILD
     $(BUILD)/Transform.o \
 	-o $@ $<
 
+$(SG_BUILD)/Camera.o: $(SG_SRC)/Camera.cpp $(SG)/Camera.hpp ./Raytracing.hpp
+	$(info $@)
+	$(CC) -c \
+	-I/usr/local/include \
+	-I./ \
+	-o $@ $<
+
 $(SG_BUILD)/Lights.o: $(SG_SRC)/Lights.cpp $(SG)/Lights.hpp $(SG)/Materials.hpp ./Raytracing.hpp
-	# TODO - replace -I./ with dir containing Raytracing.hpp
 	$(info $@)
 	$(CC) -c \
 	-I/usr/local/include \
@@ -37,7 +44,6 @@ $(SG_BUILD)/Lights.o: $(SG_SRC)/Lights.cpp $(SG)/Lights.hpp $(SG)/Materials.hpp 
 	-o $@ $<
 
 $(SG_BUILD)/Objects.o: $(SG_SRC)/Objects.cpp $(SG)/Objects.hpp ./Raytracing.hpp
-	# TODO - replace -I./ with dir containing Raytracing.hpp
 	$(info $@)
 	$(CC) -c \
 	-I/usr/local/include \
@@ -45,7 +51,6 @@ $(SG_BUILD)/Objects.o: $(SG_SRC)/Objects.cpp $(SG)/Objects.hpp ./Raytracing.hpp
 	-o $@ $<
 
 $(SG_BUILD)/Scene.o: $(SG_SRC)/Scene.cpp $(SG)/Lights.hpp $(SG)/Materials.hpp $(SG)/Objects.hpp ./Raytracing.hpp
-	# TODO - replace -I./ with dir containing Raytracing.hpp
 	$(info $@)
 	$(CC) -c \
 	-I/usr/local/include \
@@ -54,7 +59,6 @@ $(SG_BUILD)/Scene.o: $(SG_SRC)/Scene.cpp $(SG)/Lights.hpp $(SG)/Materials.hpp $(
 
 
 $(BUILD)/%.o: $(SRC)/%.cpp ./%.hpp
-	# TODO - replace -I./ with dir containing Raytracing.hpp
 	$(info $@)
 	$(CC) -c \
 	-I/usr/local/include \
