@@ -1,6 +1,5 @@
 #include<array>
 #include<cmath>
-#include<functional>
 #include<iostream>
 #include<string>
 #include<vector>
@@ -8,6 +7,7 @@
 #include<glm/glm.hpp>
 
 // TODO
+#include "PixelDraw.hpp"
 #include "Raytracing.hpp"
 #include "SaveUtils.hpp"
 #include "Transform.hpp"
@@ -19,11 +19,6 @@
 
 const char* OUTPUT_FILE_PATH = "./test.ppm";
 
-// Want to support function pointer for basic functions operating on (uvX, uvY)
-// Also want to support lambdas capturing e.g. Camera
-typedef std::function<glm::vec3 (float, float)> PixelFunc;
-
-
 typedef struct {
     glm::vec3 eye;
     glm::vec3 f;    // Forward
@@ -32,32 +27,6 @@ typedef struct {
     float fovXMultiplier;
     float fovYMultiplier;
 } Camera;
-
-/**
- * Apply a function to each pixel in an input image.
- * PixelFunc is passed coordinates in [0, 1] with the origin
- * at bottom left of the image.
- * @param image - 2D array of glm::vec3 representing image RGB
- * @param width - Image width (axis 1 of image)
- * @param height - Image height (axis 0 of image)
- * @param f - Function (uvX, uvY) -> pixelRgb
- */
-void pixelShade(
-    glm::vec3 **image, 
-    const int width, 
-    const int height, 
-    const PixelFunc f
-) {
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
-            // Remap (i, j) into unit square
-            float uvX = (float)j / ((float)(width - 1));
-            // We want y=0 at bottom of image
-            float uvY = (float)(height - 1 - i) / ((float)(height - 1));
-            image[i][j] = f(uvX, uvY);
-        }
-    }
-}
 
 Camera makeCamera(
     const glm::vec3 eye, 
@@ -216,7 +185,7 @@ int main() {
     scene.addObject(&tri1);
     scene.addObject(&tri2);
 
-    PixelFunc traceFunc = [&camera, &scene, maxBounces](float uvX, float uvY) {
+    PixelDraw::PixelFunc traceFunc = [&camera, &scene, maxBounces](float uvX, float uvY) {
         return whittedRayTracePixelFunc(
             camera, 
             scene, 
@@ -226,7 +195,7 @@ int main() {
         );
     };
 
-    pixelShade(image, width, height, traceFunc);
+    PixelDraw::pixelShade(image, width, height, traceFunc);
 
     // Save output image
     std::string ppmString = SaveUtils::rgbToPpm(image, width, height);

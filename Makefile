@@ -14,7 +14,7 @@ CC=g++ -std=c++17
 
 all: $(BIN)/main.o
 
-$(BIN)/main.o: $(SRC)/main.cpp $(BUILD)/SaveUtils.o $(SG_BUILD)/Lights.o $(SG_BUILD)/Objects.o $(SG_BUILD)/Scene.o $(BUILD)/Transform.o $(SG)/Materials.hpp ./Raytracing.hpp
+$(BIN)/main.o: $(SRC)/main.cpp $(BUILD)/PixelDraw.o $(BUILD)/SaveUtils.o $(BUILD)/Transform.o $(SG_BUILD)/Lights.o $(SG_BUILD)/Objects.o $(SG_BUILD)/Scene.o $(SG)/Materials.hpp ./Raytracing.hpp
 	# TODO - replace -I./ with dir containing Raytracing.hpp
 	$(info $@)
 	$(CC) \
@@ -23,6 +23,7 @@ $(BIN)/main.o: $(SRC)/main.cpp $(BUILD)/SaveUtils.o $(SG_BUILD)/Lights.o $(SG_BU
 	$(SG_BUILD)/Lights.o \
 	$(SG_BUILD)/Objects.o \
     $(SG_BUILD)/Scene.o \
+    $(BUILD)/PixelDraw.o \
 	$(BUILD)/SaveUtils.o \
     $(BUILD)/Transform.o \
 	-o $@ $<
