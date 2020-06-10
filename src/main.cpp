@@ -98,6 +98,7 @@ Raytracing::Ray cameraViewRay(const Camera& camera, const float uvX, const float
 glm::vec3 whittedRayTracePixelFunc(
     const Camera& camera, 
     const SimpleGraphics::Scene& scene,
+    const int maxBounces,
     float uvX, 
     float uvY 
 ) {
@@ -110,7 +111,8 @@ glm::vec3 whittedRayTracePixelFunc(
     return SimpleGraphics::whittedRayTrace(
         viewRay, 
         scene,
-        glm::vec3(0.0f, 0.0f, 1.0f)
+        glm::vec3(0.0f, 0.0f, 0.2f),
+        maxBounces
     );
 }
 
@@ -118,6 +120,7 @@ glm::vec3 whittedRayTracePixelFunc(
 int main() {
     int width = 400;
     int height = 300;
+    int maxBounces = 1;
 
     // Initialize image
     std::cout << "Initialize image with shape (" << width << ", " << height << ")" << std::endl;
@@ -158,8 +161,8 @@ int main() {
 
     // MATERIALS
     SimpleGraphics::StaticMaterial redMat = {
-        glm::vec3(1.0f, 0.0f, 0.0f),    // Diffuse
-        glm::vec3(1.0f, 1.0f, 1.0f),    // Specular
+        glm::vec3(0.9f, 0.0f, 0.0f),    // Diffuse
+        glm::vec3(0.5f),                // Specular
         glm::vec3(0.1f, 0.0f, 0.0f),    // Ambient
         glm::vec3(0.0f, 0.0f, 0.0f),    // Emission
         128.0f                           // Shiny
@@ -170,7 +173,7 @@ int main() {
         0.1f,               // ambientMultiplier
         glm::vec3(0.9f),    // oddColor
         glm::vec3(0.1f),    // evenColor
-        glm::vec3(0.99f),   // Specular
+        glm::vec3(0.2f),   // Specular
         64.0f               // Shiny
     };
 
@@ -213,8 +216,14 @@ int main() {
     scene.addObject(&tri1);
     scene.addObject(&tri2);
 
-    PixelFunc traceFunc = [&camera, &scene](float uvX, float uvY) {
-        return whittedRayTracePixelFunc(camera, scene, uvX, uvY);
+    PixelFunc traceFunc = [&camera, &scene, maxBounces](float uvX, float uvY) {
+        return whittedRayTracePixelFunc(
+            camera, 
+            scene, 
+            maxBounces, 
+            uvX, 
+            uvY
+        );
     };
 
     pixelShade(image, width, height, traceFunc);

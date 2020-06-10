@@ -38,19 +38,13 @@ class Scene {
             return lightId;
         }
 
-        ::Raytracing::HitInfo rayCast(const ::Raytracing::Ray& ray, const ::SimpleGraphics::Scene& scene);
-
-        glm::vec3 whittedRayTrace(
-            const ::Raytracing::Ray& viewRay,
-            const ::SimpleGraphics::Scene& scene,
-            glm::vec3 missColor
-        );
 
         Scene() {}
 
         Scene(std::vector<::SimpleGraphics::Light*> lights)
             : lights(lights) {}
 };
+
 
 ::Raytracing::HitInfo rayCast(const ::Raytracing::Ray& ray, const ::SimpleGraphics::Scene& scene); 
 
@@ -64,7 +58,8 @@ bool isInShadow(
 glm::vec3 whittedRayTrace(
     const ::Raytracing::Ray& viewRay, 
     const ::SimpleGraphics::Scene& scene,
-    glm::vec3 missColor
+    glm::vec3 missColor,
+    int maxBounces
 );
 
 } // namespace SimpleScene

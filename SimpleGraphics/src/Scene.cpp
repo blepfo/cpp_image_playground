@@ -62,38 +62,56 @@ bool isInShadow(
 glm::vec3 whittedRayTrace(
     const ::Raytracing::Ray& viewRay, 
     const ::SimpleGraphics::Scene& scene,
-    glm::vec3 missColor
+    glm::vec3 missColor,
+    int maxBounces
 ) {
-    ::Raytracing::HitInfo sceneHit = rayCast(viewRay, scene);
-    if (sceneHit.distance > 0) {
-        // Get material for object
-        ::SimpleGraphics::Material* material = scene.materials[sceneHit.materialId];
-        glm::vec3 illumination = material->ambient(sceneHit.p) + material->emission(sceneHit.p);
-        for (int lightNum = 0; lightNum < scene.lights.size(); lightNum++) {
-            // Determine visibility using Shadow Ray
-            ::SimpleGraphics::Light* currentLight = scene.lights[lightNum];
-            glm::vec3 lightDir = currentLight->getDirection(sceneHit.p);
-            float lightDistance = currentLight->getDistance(sceneHit.p);
-            glm::vec3 startPoint = sceneHit.p + (sceneHit.n * 0.01f);
-            bool shadowed = isInShadow(startPoint, lightDir, lightDistance, scene);
-
-            // No light contribution if in shadow
-            if (!shadowed) {
-                illumination += currentLight->illuminate(
-                    sceneHit.p,
-                    sceneHit.n,
-                    viewRay.o,
-                    material
-                );
-            }
-        }
-
-        // TODO Secondary rays
-        // Reflection 
-        return illumination;
+    if (maxBounces < 0) {
+        // When maxBounces negative, finished raytracing
+        return glm::vec3(0.0f);
     } else {
-        // No Scene hit
-        return missColor;
+        ::Raytracing::HitInfo sceneHit = rayCast(viewRay, scene);
+        if (sceneHit.distance > 0) {
+            // Get material for object
+            ::SimpleGraphics::Material* material = scene.materials[sceneHit.materialId];
+            glm::vec3 illumination = material->ambient(sceneHit.p) + material->emission(sceneHit.p);
+            for (int lightNum = 0; lightNum < scene.lights.size(); lightNum++) {
+                // Determine visibility using Shadow Ray
+                ::SimpleGraphics::Light* currentLight = scene.lights[lightNum];
+                glm::vec3 lightDir = currentLight->getDirection(sceneHit.p);
+                float lightDistance = currentLight->getDistance(sceneHit.p);
+                glm::vec3 startPoint = sceneHit.p + (sceneHit.n * 0.01f);
+                bool shadowed = isInShadow(startPoint, lightDir, lightDistance, scene);
+
+                // No light contribution if in shadow
+                if (!shadowed) {
+                    illumination += currentLight->illuminate(
+                        sceneHit.p,
+                        sceneHit.n,
+                        viewRay.o,
+                        material
+                    );
+                }
+            }
+            // Weight reflection using specular
+            glm::vec3 specular = material->specular(sceneHit.p);
+            glm::vec3 reflectedDir = glm::normalize(viewRay.d - (2.0f * glm::dot(viewRay.d, sceneHit.n) * sceneHit.n));
+
+            reflectedDir = glm::reflect(viewRay.d, sceneHit.n);
+
+            // Move reflection away from the surface to prevent numerical issues
+            glm::vec3 reflectionOrigin = sceneHit.p + (sceneHit.n * 0.01f);
+            ::Raytracing::Ray reflectionRay = { reflectionOrigin, reflectedDir };
+            glm::vec3 reflectionColor = whittedRayTrace(
+                reflectionRay,
+                scene,
+                missColor,
+                maxBounces - 1
+            );
+            return illumination + (reflectionColor * specular);
+        } else {
+            // No Scene hit
+            return missColor;
+        }
     }
 }
 
