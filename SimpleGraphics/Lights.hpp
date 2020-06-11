@@ -1,6 +1,8 @@
 #pragma once
 
-#include<limits>
+#include <limits>
+#include <sstream>
+#include <string>
 
 #include<glm/glm.hpp>
 
@@ -19,6 +21,8 @@ class Light {
 
         virtual float getDistance(const glm::vec3 p) const = 0;
         virtual glm::vec3 getDirection(const glm::vec3 p) const = 0;
+
+        virtual std::string toString() const = 0;
 
         glm::vec3 i;    // Intensity
         glm::vec3 ambient;
@@ -48,6 +52,19 @@ class PointLight : public ::SimpleGraphics::Light {
             return glm::distance(p, this->o);
         }
 
+        std::string toString() const override {
+            std::stringstream ss;
+            ss 
+                << "PointLight<\n"
+                << "\tintensity=(" << this->i[0] << ", " << this->i[1] << ", " << this->i[2] << ")\n"
+                << "\tambient=(" << this->ambient[0] << ", " << this->ambient[1] << ", " << this->ambient[2] << ")\n"
+                << "\torigin=(" << this->o[0] << ", " << this->o[1] << ", " << this->o[2] << ")\n"
+                << "\tattenuation=(" << this->attenuation[0] << ", " << this->attenuation[1] << ", " << this->attenuation[2] << ")\n"
+                << ">"
+            ;
+            return ss.str();
+        }
+
         PointLight(glm::vec3 o, glm::vec3 attenuation, glm::vec3 i, glm::vec3 ambient)
             : o(o), attenuation(attenuation), ::SimpleGraphics::Light(i, ambient) {}
 };
@@ -69,6 +86,18 @@ class DirectionLight : public ::SimpleGraphics::Light {
 
         float getDistance(const glm::vec3 p) const override {
             return std::numeric_limits<float>::infinity();
+        }
+
+        std::string toString() const override {
+            std::stringstream ss;
+            ss 
+                << "DirectionLight<\n"
+                << "\tintensity=(" << this->i[0] << ", " << this->i[1] << ", " << this->i[2] << ")\n"
+                << "\tambient=(" << this->ambient[0] << ", " << this->ambient[1] << ", " << this->ambient[2] << ")\n"
+                << "\tdirection=(" << this->d[0] << ", " << this->d[1] << ", " << this->d[2] << ")\n"
+                << ">"
+            ;
+            return ss.str();
         }
 
         DirectionLight(glm::vec3 d, glm::vec3 i, glm::vec3 ambient)

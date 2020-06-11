@@ -1,5 +1,8 @@
 #pragma once
 
+#include <sstream>
+#include <string>
+
 #include<glm/glm.hpp>
 
 namespace SimpleGraphics {
@@ -13,6 +16,8 @@ class Intersectable : public Raytracing::RayIntersectable {
     public:
         int materialId;
 
+        virtual std::string toString() const = 0;
+
         Intersectable(int materialId) 
             : materialId(materialId), Raytracing::RayIntersectable() {}
 
@@ -25,6 +30,17 @@ class Intersectable : public Raytracing::RayIntersectable {
 class Sphere : public ::SimpleGraphics::Intersectable {
     public:
         Raytracing::HitInfo intersect(const Raytracing::Ray& ray) const override; 
+
+        std::string toString() const override {
+            std::stringstream ss;
+            ss 
+                << "Sphere<\n"
+                << "\tradius=" << this->r << "\n"
+                << "\tcenter=(" << this->c[0] << ", " << this->c[1] << ", " << this->c[2] << ")\n"
+                << ">"
+            ;
+            return ss.str();
+        }
 
         Sphere(float r, glm::vec3 c, int materialId) 
             : r(r), c(c), ::SimpleGraphics::Intersectable(materialId) {}
@@ -52,6 +68,18 @@ class Triangle : public ::SimpleGraphics::Intersectable {
             ::SimpleGraphics::Intersectable(materialId) {
                 this->normal = glm::normalize(glm::cross(B-A, C-A));
             }
+
+        std::string toString() const override {
+            std::stringstream ss;
+            ss 
+                << "Triangle<\n"
+                << "\tA=(" << this->A[0] << ", " << this->A[1] << ", " << this->A[2] << ")\n"
+                << "\tB=(" << this->B[0] << ", " << this->B[1] << ", " << this->B[2] << ")\n"
+                << "\tC=(" << this->C[0] << ", " << this->C[1] << ", " << this->C[2] << ")\n"
+                << ">"
+            ;
+            return ss.str();
+        }
 
         Triangle(
             glm::vec3 A, 

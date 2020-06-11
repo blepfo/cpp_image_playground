@@ -50,7 +50,7 @@ $(SG_BUILD)/Objects.o: $(SG_SRC)/Objects.cpp $(SG)/Objects.hpp ./Raytracing.hpp
 	-I./ \
 	-o $@ $<
 
-$(SG_BUILD)/Scene.o: $(SG_SRC)/Scene.cpp $(SG)/Lights.hpp $(SG)/Materials.hpp $(SG)/Objects.hpp ./Raytracing.hpp
+$(SG_BUILD)/Scene.o: $(SG_SRC)/Scene.cpp $(SG)/Scene.hpp $(SG)/Lights.hpp $(SG)/Materials.hpp $(SG)/Objects.hpp ./Raytracing.hpp
 	$(info $@)
 	$(CC) -c \
 	-I/usr/local/include \

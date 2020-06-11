@@ -1,7 +1,9 @@
 #pragma once
 
-#include<cmath>
-#include<glm/glm.hpp>
+#include <cmath>
+#include <sstream>
+#include <string>
+#include <glm/glm.hpp>
 
 namespace SimpleGraphics {
 
@@ -12,6 +14,8 @@ class Material {
         virtual glm::vec3 ambient(const glm::vec3 p) const = 0;
         virtual glm::vec3 emission(const glm::vec3 p) const = 0;
         virtual float shiny(const glm::vec3 p) const = 0;
+
+        virtual std::string toString() const = 0;
 };
 
 
@@ -41,6 +45,20 @@ class StaticMaterial : public ::SimpleGraphics::Material {
 
         float shiny (const glm::vec3 p) const override {
             return this->_shiny;
+        }
+
+        std::string toString() const override {
+            std::stringstream ss;
+            ss
+                << "Material<\n"
+                << "\tdiffuse=(" << this->_diffuse[0] << ", " << this->_diffuse[1] << ", " << this->_diffuse[2] << ")\n"
+                << "\tspecular=(" << this->_specular[0] << ", " << this->_specular[1] << ", " << this->_specular[2] << ")\n"
+                << "\tambient=(" << this->_ambient[0] << ", " << this->_ambient[1] << ", " << this->_ambient[2] << ")\n"
+                << "\temission=(" << this->_emission[0] << ", " << this->_emission[1] << ", " << this->_emission[2] << ")\n"
+                << "\tshiny=" << this->_shiny
+                << ">"
+            ;
+            return ss.str();
         }
 
 		StaticMaterial(
@@ -74,26 +92,31 @@ class CheckerboardXZ : public ::SimpleGraphics::Material {
 
         }
 
-        glm::vec3 diffuse(const glm::vec3 p) const {
+        glm::vec3 diffuse(const glm::vec3 p) const override {
             if (this->isEvenTile(p)) return this->colorEven;
             else return this->colorOdd;
         }
 
-        glm::vec3 specular(const glm::vec3 p) const {
+        glm::vec3 specular(const glm::vec3 p) const override {
             return this->_specular;
         }
 
-        glm::vec3 ambient(const glm::vec3 p) const {
+        glm::vec3 ambient(const glm::vec3 p) const override {
             if (this->isEvenTile(p)) return (this->colorEven * this->ambientMultiplier);
             else return (this->colorOdd * this->ambientMultiplier);
         }
 
-        glm::vec3 emission(const glm::vec3 p) const {
+        glm::vec3 emission(const glm::vec3 p) const override {
             return glm::vec3(0.0f);
         }
 
-        float shiny(const glm::vec3 p) const {
+        float shiny(const glm::vec3 p) const override {
             return this->_shiny;
+        }
+
+        // TODO - tostring
+        std::string toString() const override {
+            return "TODO - implement checkerboard tostring";
         }
 
         CheckerboardXZ(

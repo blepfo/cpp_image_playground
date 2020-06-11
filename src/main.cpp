@@ -141,6 +141,8 @@ int main() {
     scene.addObject(&tri1);
     scene.addObject(&tri2);
 
+    std::cout << scene.toString() << std::endl;
+
     PixelDraw::PixelFunc traceFunc = [&camera, &scene, maxBounces](float uvX, float uvY) {
         return whittedRayTracePixelFunc(
             camera, 

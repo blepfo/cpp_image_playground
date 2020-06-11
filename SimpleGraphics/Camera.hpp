@@ -1,5 +1,8 @@
 #pragma once
 
+#include<string>
+#include<sstream>
+
 #include <glm/glm.hpp>
 
 // TODO
@@ -17,6 +20,17 @@ class Camera {
         float fovYMultiplier;
 
         ::Raytracing::Ray viewRay(const float uvX, const float uvY) const;
+
+        std::string toString() const {
+            std::stringstream ss;
+            ss 
+                << "Camera<"
+                << " eye=(" << this->eye[0] << " " << this->eye[1] << " " << this->eye[2] << ")"
+                << " f=(" << this->f[0] << " " << this->f[1] << " " << this->f[2] << ")"
+                << " >"
+            ;
+            return ss.str();
+        }
 
         Camera( 
             const glm::vec3 eye,

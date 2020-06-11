@@ -1,8 +1,10 @@
 #pragma once
 
-#include<vector>
+#include <sstream>
+#include <string>
+#include <vector>
 
-#include<glm/glm.hpp>
+#include <glm/glm.hpp>
 
 // TODO
 #include "Raytracing.hpp"
@@ -38,6 +40,22 @@ class Scene {
             return lightId;
         }
 
+        std::string toString() {
+            std::stringstream ss;
+            ss << "----- SCENE -----";
+            // Lights
+            ss << "\n-- LIGHTS --";
+            for (int i = 0; i < lights.size(); i++) {
+                ss << "\n" << i << " - " << lights[i]->toString();
+            }
+            // Materials
+            ss << "\n-- MATERIALS --";
+            for (int i = 0; i < materials.size(); i++) {
+                ss << "\n" << i << " - " << materials[i]->toString();
+            }
+            // TODO - objects
+            return ss.str();
+        }
 
         Scene() {}
 
