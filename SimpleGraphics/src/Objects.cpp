@@ -62,11 +62,8 @@ namespace SimpleGraphics {
     const glm::dvec3 DxAC = glm::cross(ray.d, AC);
     
     const double totalDeterminant = glm::dot(DxAC, AB);
-    // If determinant is 0, unabel to solve system
-    if (std::abs(totalDeterminant) < 0.0000001) {
-        return ::Raytracing::noHit;
-    }
-    // Backface culling
+    // If determinant is 0, unable to solve system
+    // If determinant is < 0, then ray is in same direction as normal == backface
     if (totalDeterminant < 0.0000001) {
         return ::Raytracing::noHit;
     }

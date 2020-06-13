@@ -4,7 +4,7 @@
 #include<string>
 #include<vector>
 
-#include<glm/glm.hpp>
+#include <glm/glm.hpp>
 
 // TODO
 #include "PixelDraw.hpp"
@@ -20,23 +20,22 @@
 
 const char* OUTPUT_FILE_PATH = "./test.ppm";
 
+/** 
+ *  Assumes uvX and uvY are in bi-unit square
+ */
 glm::vec3 whittedRayTracePixelFunc(
     const SimpleGraphics::Camera& camera, 
     const SimpleGraphics::Scene& scene,
     const int maxBounces,
-    float uvX, 
-    float uvY 
+    double uvX,
+    double uvY
 ) {
-    // TODO - May need to shift Uvs by 0.5 so rays go through center of pixels instead of corners
-    // Remap uvs into [-1, 1]^2
-    uvX = (uvX * 2.0f) - 1.0f;
-    uvY = (uvY * 2.0f) - 1.0f;
     Raytracing::Ray viewRay = camera.viewRay(uvX, uvY);
 
     return SimpleGraphics::whittedRayTrace(
         viewRay, 
         scene,
-        glm::vec3(0.0f, 0.0f, 0.2f),
+        glm::dvec3(0.0, 0.0, 0.2),
         maxBounces
     );
 }
@@ -49,19 +48,19 @@ int main() {
 
     // Initialize image
     std::cout << "Initialize image with shape (" << width << ", " << height << ")" << std::endl;
-    glm::vec3** image;
-    image = new glm::vec3*[height];
+    glm::dvec3** image;
+    image = new glm::dvec3*[height];
     for (int i = 0; i < height; i++) {
-        image[i] = new glm::vec3[width];
+        image[i] = new glm::dvec3[width];
     }
 
     // CAMERA
     SimpleGraphics::Camera camera = SimpleGraphics::Camera(
-        glm::vec3(-1.5f, 0.5f, 2.0f), 
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(0.0f, 1.0f, 0.0f),
-        60.0f,
-        (float)width / (float)height
+        glm::dvec3(-1.5, 0.5, 2.0), 
+        glm::dvec3(0.0, 0.0, 0.0),
+        glm::dvec3(0.0, 1.0, 0.0),
+        60.0,
+        (double)width / (double)height
     );
 
     // CREATE SCENE
@@ -69,16 +68,16 @@ int main() {
 
     // LIGHTS
     SimpleGraphics::PointLight pointLight1 = {
-        glm::vec3(1.5f, 2.0f, 0.5f),   // Origin
-        glm::vec3(0.0f, 0.0f, 1.0f),    // Attenuation
-        glm::vec3(7.5f),                // Intensity
-        glm::vec3(0.0f, 0.0f, 0.0f),    // Ambient
+        glm::dvec3(1.5, 2.0, 0.5),   // Origin
+        glm::dvec3(0.0, 0.0, 1.0),    // Attenuation
+        glm::dvec3(7.5),                // Intensity
+        glm::dvec3(0.0, 0.0, 0.0),    // Ambient
     };
     SimpleGraphics::PointLight pointLight2 = {
-        glm::vec3(-2.5f, 3.0f, -0.5f),   // Origin
-        glm::vec3(0.0f, 0.0f, 1.0f),     // Attenuation
-        glm::vec3(10.0f),                // Intensity
-        glm::vec3(0.0f, 0.0f, 0.0f),    // Ambient
+        glm::dvec3(-2.5, 3.0, -0.5),   // Origin
+        glm::dvec3(0.0, 0.0, 1.0),     // Attenuation
+        glm::dvec3(10.0),                // Intensity
+        glm::dvec3(0.0, 0.0, 0.0),    // Ambient
     };
 
     scene.addLight(&pointLight1);
@@ -86,20 +85,20 @@ int main() {
 
     // MATERIALS
     SimpleGraphics::StaticMaterial redMat = {
-        glm::vec3(0.9f, 0.0f, 0.0f),    // Diffuse
-        glm::vec3(0.5f),                // Specular
-        glm::vec3(0.1f, 0.0f, 0.0f),    // Ambient
-        glm::vec3(0.0f, 0.0f, 0.0f),    // Emission
-        128.0f                           // Shiny
+        glm::dvec3(0.9, 0.0, 0.0),    // Diffuse
+        glm::dvec3(0.5),                // Specular
+        glm::dvec3(0.1, 0.0, 0.0),    // Ambient
+        glm::dvec3(0.0, 0.0, 0.0),    // Emission
+        128.0                           // Shiny
     };
 
     SimpleGraphics::CheckerboardXZ planeMat = {
-        2.0f, 2.0f,         // scaleX, scaleY
-        0.1f,               // ambientMultiplier
-        glm::vec3(0.9f),    // oddColor
-        glm::vec3(0.1f),    // evenColor
-        glm::vec3(0.2f),   // Specular
-        64.0f               // Shiny
+        2.0, 2.0,         // scaleX, scaleY
+        0.1,               // ambientMultiplier
+        glm::dvec3(0.9),    // oddColor
+        glm::dvec3(0.1),    // evenColor
+        glm::dvec3(0.2),   // Specular
+        64.0               // Shiny
     };
 
     int redMaterial = scene.addMaterial(&redMat);
@@ -107,31 +106,31 @@ int main() {
 
     // OBJECTS
     SimpleGraphics::Sphere sphere1 = { 
-        0.5f,                           // Radius
-        glm::vec3(0.0f, 0.0f, 0.0f),    // Center
+        0.5,                           // Radius
+        glm::dvec3(0.0, 0.0, 0.0),    // Center
         redMaterial,                    // Material
-        Transform::scale(1.0f, 2.0f, 1.0f)
+        Transform::scale(1.0, 2.0, 1.0)
     };
 
     SimpleGraphics::Sphere sphere2 = { 
-        0.5f,                           // Radius
-        glm::vec3(0.0f, 0.0f, 0.0f),    // Center
+        0.5,                           // Radius
+        glm::dvec3(0.0, 0.0, 0.0),    // Center
         redMaterial,                    // Material
-        Transform::translate(-0.5f, 0.5f, -0.7f) 
+        Transform::translate(-0.5, 0.5, -0.7) 
     };
 
-    glm::mat4 planeTransform = Transform::translate(-2.5f, -0.5f, 1.0f);
+    glm::dmat4 planeTransform = Transform::translate(-2.5, -0.5, 1.0);
     SimpleGraphics::Triangle tri1 = {
-        glm::vec3(5.0f, 0.0f, 0.0f),
-        glm::vec3(5.0f, 0.0f, -5.0f),
-        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::dvec3(5.0, 0.0, 0.0),
+        glm::dvec3(5.0, 0.0, -5.0),
+        glm::dvec3(0.0, 0.0, 0.0),
         planeMaterial,
         planeTransform
     };
     SimpleGraphics::Triangle tri2 = {
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(5.0f, 0.0f, -5.0f),
-        glm::vec3(0.0f, 0.0f, -5.0f),
+        glm::dvec3(0.0, 0.0, 0.0),
+        glm::dvec3(5.0, 0.0, -5.0),
+        glm::dvec3(0.0, 0.0, -5.0),
         planeMaterial,
         planeTransform
     };
@@ -143,17 +142,29 @@ int main() {
 
     std::cout << scene.toString() << std::endl;
 
-    PixelDraw::PixelFunc traceFunc = [&camera, &scene, maxBounces](float uvX, float uvY) {
+    const double halfWidth = (double)(width - 1) / 2.0;
+    const double halfHeight = (double)(height - 1) / 2.0;
+    const double invHalfWidth = 1.0 / halfWidth;
+    const double invHalfHeight  = 1.0 / halfHeight;
+    PixelDraw::PixelFunc traceFunc = 
+        [&camera, &scene, halfWidth, invHalfWidth, halfHeight, invHalfHeight, maxBounces]
+        //[&camera, &scene, maxBounces, height, width]
+        //(double x, double y) {
+        (int x, int y) {
+        double uvX = ((double)x + 0.5 - halfWidth) * invHalfWidth;
+        double uvY = ((double)halfHeight - y + 0.5) * invHalfHeight;
+
         return whittedRayTracePixelFunc(
             camera, 
             scene, 
             maxBounces, 
-            uvX, 
-            uvY
+            uvX,
+            uvY 
         );
     };
 
-    PixelDraw::pixelShade(image, width, height, traceFunc);
+    PixelDraw::pixelShade(image, width, height, traceFunc, 8);
+     std::cout << "DONE WITH SHADE" << std::endl;
 
     // Save output image
     std::string ppmString = SaveUtils::rgbToPpm(image, width, height);

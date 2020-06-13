@@ -17,7 +17,7 @@ glm::dmat4 translate(const double x, const double y, const double z) {
 }
 
 glm::dmat4 scale(const double x, const double y, const double z) {
-    return glm::transpose(glm::mat4(
+    return glm::transpose(glm::dmat4(
         x, 0, 0, 0,
         0, y, 0, 0,
         0, 0, z, 0,
@@ -27,7 +27,7 @@ glm::dmat4 scale(const double x, const double y, const double z) {
 
 // Rodriguez rotation formula
 glm::dmat4 rotate(const glm::dvec3 axis, const double theta) {
-    const glm::dmat3 I = glm::mat3(1.0);
+    const glm::dmat3 I = glm::dmat3(1.0);
     const glm::dmat3 crossMat = glm::transpose(glm::dmat3(
         0, -axis[2], axis[1],
         axis[2], 0, -axis[0],

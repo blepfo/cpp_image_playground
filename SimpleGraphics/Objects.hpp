@@ -37,7 +37,7 @@ class Sphere : public ::SimpleGraphics::Intersectable {
                 << "SimpleGraphics::Sphere"
                 << "\n\tradius=" << this->r
                 << "\n\tcenter=(" << this->c[0] << ", " << this->c[1] << ", " << this->c[2] << ")"
-                << "\n\tmatId=" << this->materialId << ")"
+                << "\n\tmatId=" << this->materialId
             ;
             return ss.str();
         }
@@ -51,7 +51,7 @@ class Sphere : public ::SimpleGraphics::Intersectable {
     private:
         const double r;
         const glm::dvec3 c;
-}; 
+};
 
 
 class Triangle : public ::SimpleGraphics::Intersectable {
@@ -87,7 +87,7 @@ class Triangle : public ::SimpleGraphics::Intersectable {
             glm::dvec3 C, 
             int materialId, 
             glm::dmat4 transform
-        ) 
+        )
             : A(A), B(B), C(C),
             ::SimpleGraphics::Intersectable(materialId, transform) {
                 this->normal = glm::normalize(glm::cross(B-A, C-A));

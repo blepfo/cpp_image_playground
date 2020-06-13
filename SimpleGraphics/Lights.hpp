@@ -49,7 +49,7 @@ class PointLight : public ::SimpleGraphics::Light {
         }
 
         double getDistance(const glm::dvec3 p) const override {
-            return glm::distance(p, this->o);
+            return glm::distance(this->o, p);
         }
 
         std::string toString() const override {

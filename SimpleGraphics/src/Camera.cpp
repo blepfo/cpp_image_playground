@@ -13,7 +13,7 @@ namespace SimpleGraphics {
         + (this->r * uvX * this->fovXMultiplier)
         + (this->u * uvY * this->fovYMultiplier);
     const glm::dvec3 direction = glm::normalize(imagePlaneIntersection - this->eye);
-    Raytracing::Ray ray = { this->eye, direction };
+    const Raytracing::Ray ray = { this->eye, direction };
     return ray;
 }
 

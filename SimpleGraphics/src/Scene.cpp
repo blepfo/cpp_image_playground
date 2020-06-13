@@ -42,13 +42,13 @@ namespace SimpleGraphics {
 }
 
 bool isInShadow(
-    const glm::dvec3 p, 
+    const glm::dvec3 shadowRayOrigin, 
     const glm::dvec3 lightDir, 
     const double lightDistance, 
     const ::SimpleGraphics::Scene& scene
 ) {
-    ::Raytracing::Ray rayTowardsLight = { p, glm::normalize(lightDir) };
-    ::Raytracing::HitInfo hitOnWayTowardsLight = rayCast(rayTowardsLight, scene);
+    const ::Raytracing::Ray rayTowardsLight = { shadowRayOrigin, glm::normalize(lightDir) };
+    const ::Raytracing::HitInfo hitOnWayTowardsLight = rayCast(rayTowardsLight, scene);
 
     if (hitOnWayTowardsLight.distance > 0.0) {
         return hitOnWayTowardsLight.distance < lightDistance;
@@ -79,8 +79,8 @@ glm::vec3 whittedRayTrace(
                 ::SimpleGraphics::Light* currentLight = scene.lights[lightNum];
                 glm::dvec3 lightDir = currentLight->getDirection(sceneHit.p);
                 double lightDistance = currentLight->getDistance(sceneHit.p);
-                glm::dvec3 startPoint = sceneHit.p + (sceneHit.n * 0.001);
-                bool shadowed = isInShadow(startPoint, lightDir, lightDistance, scene);
+                glm::dvec3 shadowRayOrigin = sceneHit.p + (sceneHit.n * 0.001);
+                bool shadowed = isInShadow(shadowRayOrigin, lightDir, lightDistance, scene);
 
                 // No light contribution if in shadow
                 if (!shadowed) {
