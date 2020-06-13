@@ -1,3 +1,7 @@
+#include <iostream>
+
+#include <omp.h>
+
 #include <glm/glm.hpp>
 
 // TODO
@@ -6,18 +10,29 @@
 namespace PixelDraw {
 
 void pixelShade(
-    glm::vec3 **image, 
+    glm::dvec3 **image,
     const int width, 
     const int height, 
-    const PixelDraw::PixelFunc f
+    const PixelDraw::PixelFunc f,
+    const int numThreads
 ) {
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
-            // Remap (i, j) into unit square
-            float uvX = (float)j / ((float)(width - 1));
-            // We want y=0 at bottom of image
-            float uvY = (float)(height - 1 - i) / ((float)(height - 1));
-            image[i][j] = f(uvX, uvY);
+    // Set threads
+    omp_set_num_threads(numThreads);
+    // Execute draw loop in parallel
+    #pragma omp parallel 
+    {
+        // To get_num_threads, need to be inside parallel region
+        #pragma omp single
+        {
+            printf("PixelDraw::pixelShade start with numThreads=%d\n", omp_get_num_threads());
+        }
+        #pragma omp for
+        {
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    image[y][x] = f(x, y);
+                }
+            }
         }
     }
 }

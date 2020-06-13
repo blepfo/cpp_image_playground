@@ -6,7 +6,7 @@
 
 namespace PixelDraw {
 
-typedef std::function<glm::vec3 (float, float)> PixelFunc;
+typedef std::function<glm::dvec3 (int, int)> PixelFunc;
 
 /**
  * Apply a function to each pixel in an input image.
@@ -16,12 +16,14 @@ typedef std::function<glm::vec3 (float, float)> PixelFunc;
  * @param width - Image width (axis 1 of image)
  * @param height - Image height (axis 0 of image)
  * @param f - Function (uvX, uvY) -> pixelRgb
+ * @param numThreads - Number of OMP threads to execute draw loop with
  */
 void pixelShade(
-    glm::vec3** image,
+    glm::dvec3** image,
     const int width,
     const int height,
-    const PixelFunc f
+    const PixelFunc f,
+    const int numThreads=8
 );
 
 } // namespace PixelDraw

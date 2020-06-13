@@ -15,18 +15,18 @@ CC=g++ -std=c++17
 all: $(BIN)/main.o
 
 $(BIN)/main.o: $(SRC)/main.cpp $(BUILD)/PixelDraw.o $(BUILD)/SaveUtils.o $(BUILD)/Transform.o $(SG_BUILD)/Camera.o $(SG_BUILD)/Lights.o $(SG_BUILD)/Objects.o $(SG_BUILD)/Scene.o $(SG)/Materials.hpp ./Raytracing.hpp
-	# TODO - replace -I./ with dir containing Raytracing.hpp
 	$(info $@)
 	$(CC) \
-    -I/usr/local/include \
+	-lomp \
+	-I/usr/local/include \
 	-I./ \
 	$(SG_BUILD)/Camera.o \
 	$(SG_BUILD)/Lights.o \
 	$(SG_BUILD)/Objects.o \
-    $(SG_BUILD)/Scene.o \
-    $(BUILD)/PixelDraw.o \
+	$(SG_BUILD)/Scene.o \
+	$(BUILD)/PixelDraw.o \
 	$(BUILD)/SaveUtils.o \
-    $(BUILD)/Transform.o \
+	$(BUILD)/Transform.o \
 	-o $@ $<
 
 $(SG_BUILD)/Camera.o: $(SG_SRC)/Camera.cpp $(SG)/Camera.hpp ./Raytracing.hpp
@@ -57,6 +57,13 @@ $(SG_BUILD)/Scene.o: $(SG_SRC)/Scene.cpp $(SG)/Scene.hpp $(SG)/Lights.hpp $(SG)/
 	-I./ \
 	-o $@ $<
 
+$(BUILD)/PixelDraw.o: $(SRC)/PixelDraw.cpp ./PixelDraw.hpp
+	$(info $@)
+	$(CC) -c \
+	-Xpreprocessor -fopenmp \
+	-I/usr/local/include \
+	-I./ \
+	-o $@ $<
 
 $(BUILD)/%.o: $(SRC)/%.cpp ./%.hpp
 	$(info $@)
