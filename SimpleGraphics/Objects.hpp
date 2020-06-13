@@ -21,7 +21,7 @@ class Intersectable : public Raytracing::RayIntersectable {
         Intersectable(int materialId) 
             : materialId(materialId), Raytracing::RayIntersectable() {}
 
-        Intersectable(int materialId, glm::mat4 transform) 
+        Intersectable(int materialId, glm::dmat4 transform) 
             : materialId(materialId), Raytracing::RayIntersectable(transform) {}
 };
 
@@ -42,15 +42,15 @@ class Sphere : public ::SimpleGraphics::Intersectable {
             return ss.str();
         }
 
-        Sphere(float r, glm::vec3 c, int materialId) 
+        Sphere(double r, glm::dvec3 c, int materialId) 
             : r(r), c(c), ::SimpleGraphics::Intersectable(materialId) {}
 
-        Sphere(float r, glm::vec3 c, int materialId, glm::mat4 transform) 
+        Sphere(double r, glm::dvec3 c, int materialId, glm::dmat4 transform) 
             : r(r), c(c), ::SimpleGraphics::Intersectable(materialId, transform) {}
 
     private:
-        const float r;
-        const glm::vec3 c;
+        const double r;
+        const glm::dvec3 c;
 }; 
 
 
@@ -59,9 +59,9 @@ class Triangle : public ::SimpleGraphics::Intersectable {
         Raytracing::HitInfo intersect(const Raytracing::Ray& ray) const override;
 
         Triangle(
-            const glm::vec3 A, 
-            const glm::vec3 B, 
-            const glm::vec3 C, 
+            const glm::dvec3 A, 
+            const glm::dvec3 B, 
+            const glm::dvec3 C, 
             int materialId
         ) 
             : A(A), B(B), C(C),
@@ -82,11 +82,11 @@ class Triangle : public ::SimpleGraphics::Intersectable {
         }
 
         Triangle(
-            glm::vec3 A, 
-            glm::vec3 B, 
-            glm::vec3 C, 
+            glm::dvec3 A, 
+            glm::dvec3 B, 
+            glm::dvec3 C, 
             int materialId, 
-            glm::mat4 transform
+            glm::dmat4 transform
         ) 
             : A(A), B(B), C(C),
             ::SimpleGraphics::Intersectable(materialId, transform) {
@@ -95,10 +95,10 @@ class Triangle : public ::SimpleGraphics::Intersectable {
 
     private:
         // For now, assume vertices in clockwise orientation
-        glm::vec3 A;
-        glm::vec3 B;
-        glm::vec3 C;
-        glm::vec3 normal;
+        glm::dvec3 A;
+        glm::dvec3 B;
+        glm::dvec3 C;
+        glm::dvec3 normal;
 
 };
 

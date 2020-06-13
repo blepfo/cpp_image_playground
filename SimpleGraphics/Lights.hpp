@@ -12,43 +12,43 @@ namespace SimpleGraphics {
 
 class Light {
     public:
-        virtual glm::vec3 illuminate(
-            const glm::vec3 p,
-            const glm::vec3 n,
-            const glm::vec3 eye,
+        virtual glm::dvec3 illuminate(
+            const glm::dvec3 p,
+            const glm::dvec3 n,
+            const glm::dvec3 eye,
             const ::SimpleGraphics::Material* material
         ) const = 0;
 
-        virtual float getDistance(const glm::vec3 p) const = 0;
-        virtual glm::vec3 getDirection(const glm::vec3 p) const = 0;
+        virtual double getDistance(const glm::dvec3 p) const = 0;
+        virtual glm::dvec3 getDirection(const glm::dvec3 p) const = 0;
 
         virtual std::string toString() const = 0;
 
-        glm::vec3 i;    // Intensity
-        glm::vec3 ambient;
+        glm::dvec3 i;    // Intensity
+        glm::dvec3 ambient;
 
-        Light(glm::vec3 i, glm::vec3 ambient)
+        Light(glm::dvec3 i, glm::dvec3 ambient)
             : i(i), ambient(ambient) {}
 };
 
 
 class PointLight : public ::SimpleGraphics::Light {
     public:
-        glm::vec3 illuminate(
-            const glm::vec3 p,
-            const glm::vec3 n,
-            const glm::vec3 eye,
+        glm::dvec3 illuminate(
+            const glm::dvec3 p,
+            const glm::dvec3 n,
+            const glm::dvec3 eye,
             const ::SimpleGraphics::Material* material
         ) const override;
         
-        glm::vec3 o;    // Origin
-        glm::vec3 attenuation;
+        glm::dvec3 o;    // Origin
+        glm::dvec3 attenuation;
 
-        glm::vec3 getDirection(const glm::vec3 p) const override {
+        glm::dvec3 getDirection(const glm::dvec3 p) const override {
             return glm::normalize(this->o - p);
         }
 
-        float getDistance(const glm::vec3 p) const override {
+        double getDistance(const glm::dvec3 p) const override {
             return glm::distance(p, this->o);
         }
 
@@ -64,27 +64,27 @@ class PointLight : public ::SimpleGraphics::Light {
             return ss.str();
         }
 
-        PointLight(glm::vec3 o, glm::vec3 attenuation, glm::vec3 i, glm::vec3 ambient)
+        PointLight(glm::dvec3 o, glm::dvec3 attenuation, glm::dvec3 i, glm::dvec3 ambient)
             : o(o), attenuation(attenuation), ::SimpleGraphics::Light(i, ambient) {}
 };
 
 class DirectionLight : public ::SimpleGraphics::Light {
     public:
-        glm::vec3 illuminate(
-            const glm::vec3 p,
-            const glm::vec3 n,
-            const glm::vec3 eye,
+        glm::dvec3 illuminate(
+            const glm::dvec3 p,
+            const glm::dvec3 n,
+            const glm::dvec3 eye,
             const ::SimpleGraphics::Material* material
         ) const override;
 
-        glm::vec3 d;    // Direction
+        glm::dvec3 d;    // Direction
 
-        glm::vec3 getDirection(const glm::vec3 p) const override {
+        glm::dvec3 getDirection(const glm::dvec3 p) const override {
             return this->d;
         }
 
-        float getDistance(const glm::vec3 p) const override {
-            return std::numeric_limits<float>::infinity();
+        double getDistance(const glm::dvec3 p) const override {
+            return std::numeric_limits<double>::infinity();
         }
 
         std::string toString() const override {
@@ -98,7 +98,7 @@ class DirectionLight : public ::SimpleGraphics::Light {
             return ss.str();
         }
 
-        DirectionLight(glm::vec3 d, glm::vec3 i, glm::vec3 ambient)
+        DirectionLight(glm::dvec3 d, glm::dvec3 i, glm::dvec3 ambient)
             : d(glm::normalize(d)), ::SimpleGraphics::Light(i, ambient) {}
 };
 

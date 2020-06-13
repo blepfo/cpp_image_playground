@@ -3,8 +3,8 @@
 #include<glm/glm.hpp>
 
 namespace Transform {
-    glm::mat4 translate(const float x, const float y, const float z); 
-    glm::mat4 scale(const float x, const float y, const float z);
-    glm::mat4 rotate(const glm::vec3 axis, const float theta);
+    glm::dmat4 translate(const double x, const double y, const double z); 
+    glm::dmat4 scale(const double x, const double y, const double z);
+    glm::dmat4 rotate(const glm::dvec3 axis, const double theta);
 
 } // namespace Transform

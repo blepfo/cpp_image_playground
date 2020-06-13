@@ -20,7 +20,7 @@ namespace SaveUtils {
  * @param height - Image height (rgbImage axis 0)
  */
 std::string rgbToPpm(
-    glm::vec3** rgbImage, 
+    glm::dvec3** rgbImage, 
     const int width, 
     const int height
 ) {
@@ -36,7 +36,7 @@ std::string rgbToPpm(
     // Write RGB values
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            glm::vec3 rgb = glm::clamp(rgbImage[i][j], 0.0f, 1.0f);
+            glm::dvec3 rgb = glm::clamp(rgbImage[i][j], 0.0, 1.0);
             int r = int(rgb[0] * 255.99);
             int g = int(rgb[1] * 255.99);
             int b = int(rgb[2] * 255.99);

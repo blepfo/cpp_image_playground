@@ -20,18 +20,18 @@ namespace SimpleGraphics {
         ::Raytracing::Ray localRay = currentObject->localRay(ray);
         ::Raytracing::HitInfo localHit = currentObject->intersect(localRay);
 
-        if (localHit.distance < 0) continue;
+        if (localHit.distance < 0.00001) continue;
         else {
             // Convert from local space to world space
-            glm::vec3 worldIntersectionPoint = currentObject->localPointToWorld(localHit.p);
-            float intersectionDistance = glm::distance(worldIntersectionPoint, ray.o);
+            glm::dvec3 worldIntersectionPoint = currentObject->localPointToWorld(localHit.p);
+            double intersectionDistance = glm::distance(worldIntersectionPoint, ray.o);
             ::Raytracing::HitInfo worldHit = {
                 intersectionDistance,
                 worldIntersectionPoint,
                 currentObject->localNormalToWorld(localHit.n),
                 localHit.materialId
             };
-            if (sceneHit.distance < 0 || (intersectionDistance < sceneHit.distance)) {
+            if (sceneHit.distance < 0.0 || (intersectionDistance < sceneHit.distance)) {
                 // Found first forward intersection OR found closer forward intersection
                 sceneHit = worldHit;
                 hitObject = currentObject;
@@ -42,15 +42,15 @@ namespace SimpleGraphics {
 }
 
 bool isInShadow(
-    const glm::vec3 p, 
-    const glm::vec3 lightDir, 
-    const float lightDistance, 
+    const glm::dvec3 p, 
+    const glm::dvec3 lightDir, 
+    const double lightDistance, 
     const ::SimpleGraphics::Scene& scene
 ) {
     ::Raytracing::Ray rayTowardsLight = { p, glm::normalize(lightDir) };
     ::Raytracing::HitInfo hitOnWayTowardsLight = rayCast(rayTowardsLight, scene);
 
-    if (hitOnWayTowardsLight.distance > 0) {
+    if (hitOnWayTowardsLight.distance > 0.0) {
         return hitOnWayTowardsLight.distance < lightDistance;
     } else {
         // No forward hit
@@ -62,24 +62,24 @@ bool isInShadow(
 glm::vec3 whittedRayTrace(
     const ::Raytracing::Ray& viewRay, 
     const ::SimpleGraphics::Scene& scene,
-    const glm::vec3 missColor,
+    const glm::dvec3 missColor,
     const int maxBounces
 ) {
     if (maxBounces < 0) {
         // When maxBounces negative, finished raytracing
-        return glm::vec3(0.0f);
+        return glm::dvec3(0.0);
     } else {
         ::Raytracing::HitInfo sceneHit = rayCast(viewRay, scene);
-        if (sceneHit.distance > 0) {
+        if (sceneHit.distance > 0.0) {
             // Get material for object
             ::SimpleGraphics::Material* material = scene.materials[sceneHit.materialId];
-            glm::vec3 illumination = material->ambient(sceneHit.p) + material->emission(sceneHit.p);
+            glm::dvec3 illumination = material->ambient(sceneHit.p) + material->emission(sceneHit.p);
             for (int lightNum = 0; lightNum < scene.lights.size(); lightNum++) {
                 // Determine visibility using Shadow Ray
                 ::SimpleGraphics::Light* currentLight = scene.lights[lightNum];
-                glm::vec3 lightDir = currentLight->getDirection(sceneHit.p);
-                float lightDistance = currentLight->getDistance(sceneHit.p);
-                glm::vec3 startPoint = sceneHit.p + (sceneHit.n * 0.01f);
+                glm::dvec3 lightDir = currentLight->getDirection(sceneHit.p);
+                double lightDistance = currentLight->getDistance(sceneHit.p);
+                glm::dvec3 startPoint = sceneHit.p + (sceneHit.n * 0.001);
                 bool shadowed = isInShadow(startPoint, lightDir, lightDistance, scene);
 
                 // No light contribution if in shadow
@@ -93,13 +93,13 @@ glm::vec3 whittedRayTrace(
                 }
             }
             // Weight reflection using specular
-            glm::vec3 specular = material->specular(sceneHit.p);
-            glm::vec3 reflectedDir = glm::reflect(viewRay.d, sceneHit.n);
+            glm::dvec3 specular = material->specular(sceneHit.p);
+            glm::dvec3 reflectedDir = glm::reflect(viewRay.d, sceneHit.n);
 
             // Move reflection away from the surface to prevent numerical issues
-            glm::vec3 reflectionOrigin = sceneHit.p + (sceneHit.n * 0.01f);
+            glm::dvec3 reflectionOrigin = sceneHit.p + (sceneHit.n * 0.001);
             ::Raytracing::Ray reflectionRay = { reflectionOrigin, reflectedDir };
-            glm::vec3 reflectionColor = whittedRayTrace(
+            glm::dvec3 reflectionColor = whittedRayTrace(
                 reflectionRay,
                 scene,
                 missColor,

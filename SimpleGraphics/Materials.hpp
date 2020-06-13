@@ -9,11 +9,11 @@ namespace SimpleGraphics {
 
 class Material {
     public:
-        virtual glm::vec3 diffuse(const glm::vec3 p) const = 0;
-        virtual glm::vec3 specular(const glm::vec3 p) const = 0;
-        virtual glm::vec3 ambient(const glm::vec3 p) const = 0;
-        virtual glm::vec3 emission(const glm::vec3 p) const = 0;
-        virtual float shiny(const glm::vec3 p) const = 0;
+        virtual glm::dvec3 diffuse(const glm::dvec3 p) const = 0;
+        virtual glm::dvec3 specular(const glm::dvec3 p) const = 0;
+        virtual glm::dvec3 ambient(const glm::dvec3 p) const = 0;
+        virtual glm::dvec3 emission(const glm::dvec3 p) const = 0;
+        virtual double shiny(const glm::dvec3 p) const = 0;
 
         virtual std::string toString() const = 0;
 };
@@ -21,29 +21,29 @@ class Material {
 
 class StaticMaterial : public ::SimpleGraphics::Material {
 	public:
-		glm::vec3 _diffuse;
-		glm::vec3 _specular;
-		glm::vec3 _ambient;
-		glm::vec3 _emission;
+		glm::dvec3 _diffuse;
+		glm::dvec3 _specular;
+		glm::dvec3 _ambient;
+		glm::dvec3 _emission;
         float _shiny;
 
-        glm::vec3 diffuse(const glm::vec3 p) const override {
+        glm::dvec3 diffuse(const glm::dvec3 p) const override {
             return this->_diffuse;
         }
         
-        glm::vec3 specular(const glm::vec3 p) const override {
+        glm::dvec3 specular(const glm::dvec3 p) const override {
             return this->_specular;
         }
 
-        glm::vec3 ambient(const glm::vec3 p) const override {
+        glm::dvec3 ambient(const glm::dvec3 p) const override {
             return this->_ambient;
         }
 
-        glm::vec3 emission(const glm::vec3 p) const override {
+        glm::dvec3 emission(const glm::dvec3 p) const override {
             return this->_emission;
         }
 
-        float shiny (const glm::vec3 p) const override {
+        double shiny (const glm::dvec3 p) const override {
             return this->_shiny;
         }
 
@@ -61,11 +61,11 @@ class StaticMaterial : public ::SimpleGraphics::Material {
         }
 
 		StaticMaterial(
-            glm::vec3 diffuse, 
-            glm::vec3 specular, 
-            glm::vec3 ambient, 
-            glm::vec3 emission, 
-            float shiny
+            glm::dvec3 diffuse, 
+            glm::dvec3 specular, 
+            glm::dvec3 ambient, 
+            glm::dvec3 emission, 
+            double shiny
         )
 			: _diffuse(diffuse), 
               _specular(specular), 
@@ -76,40 +76,40 @@ class StaticMaterial : public ::SimpleGraphics::Material {
 
 class CheckerboardXZ : public ::SimpleGraphics::Material {
     public:
-        float scaleX;
-        float scaleZ;
-        float ambientMultiplier;
-        glm::vec3 colorOdd;
-        glm::vec3 colorEven;
-        glm::vec3 _specular;
-        float _shiny;
+        double scaleX;
+        double scaleZ;
+        double ambientMultiplier;
+        glm::dvec3 colorOdd;
+        glm::dvec3 colorEven;
+        glm::dvec3 _specular;
+        double _shiny;
 
-        bool isEvenTile(const glm::vec3 p) const {
+        bool isEvenTile(const glm::dvec3 p) const {
             int tileX = (int)(std::floor(p[0] * this->scaleX));
             int tileZ = (int)(std::floor(p[2] * this->scaleZ));
             return (((tileX + tileZ) % 2)) == 0;
 
         }
 
-        glm::vec3 diffuse(const glm::vec3 p) const override {
+        glm::dvec3 diffuse(const glm::dvec3 p) const override {
             if (this->isEvenTile(p)) return this->colorEven;
             else return this->colorOdd;
         }
 
-        glm::vec3 specular(const glm::vec3 p) const override {
+        glm::dvec3 specular(const glm::dvec3 p) const override {
             return this->_specular;
         }
 
-        glm::vec3 ambient(const glm::vec3 p) const override {
+        glm::dvec3 ambient(const glm::dvec3 p) const override {
             if (this->isEvenTile(p)) return (this->colorEven * this->ambientMultiplier);
             else return (this->colorOdd * this->ambientMultiplier);
         }
 
-        glm::vec3 emission(const glm::vec3 p) const override {
-            return glm::vec3(0.0f);
+        glm::dvec3 emission(const glm::dvec3 p) const override {
+            return glm::dvec3(0.0f);
         }
 
-        float shiny(const glm::vec3 p) const override {
+        double shiny(const glm::dvec3 p) const override {
             return this->_shiny;
         }
 
@@ -119,13 +119,13 @@ class CheckerboardXZ : public ::SimpleGraphics::Material {
         }
 
         CheckerboardXZ(
-            float scaleX,
-            float scaleZ,
-            float ambientMultiplier,
-            glm::vec3 colorOdd,
-            glm::vec3 colorEven,
-            glm::vec3 specular,
-            float shiny
+            double scaleX,
+            double scaleZ,
+            double ambientMultiplier,
+            glm::dvec3 colorOdd,
+            glm::dvec3 colorEven,
+            glm::dvec3 specular,
+            double shiny
         ) : scaleX(scaleX),
             scaleZ(scaleZ),
             ambientMultiplier(ambientMultiplier),

@@ -7,12 +7,12 @@
 
 namespace SimpleGraphics {
 
-::Raytracing::Ray Camera::viewRay(const float uvX, const float uvY) const {
-    glm::vec3 imagePlaneCenter = this->eye + this->f;
-    glm::vec3 imagePlaneIntersection = imagePlaneCenter
+::Raytracing::Ray Camera::viewRay(const double uvX, const double uvY) const {
+    const glm::dvec3 imagePlaneCenter = this->eye + this->f;
+    const glm::dvec3 imagePlaneIntersection = imagePlaneCenter
         + (this->r * uvX * this->fovXMultiplier)
         + (this->u * uvY * this->fovYMultiplier);
-    glm::vec3 direction = glm::normalize(imagePlaneIntersection - this->eye);
+    const glm::dvec3 direction = glm::normalize(imagePlaneIntersection - this->eye);
     Raytracing::Ray ray = { this->eye, direction };
     return ray;
 }

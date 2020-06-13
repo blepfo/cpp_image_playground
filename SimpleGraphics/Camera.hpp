@@ -12,14 +12,14 @@ namespace SimpleGraphics {
 
 class Camera {
     public: 
-        glm::vec3 eye;
-        glm::vec3 f;    // Forward
-        glm::vec3 u;    // Up
-        glm::vec3 r;    // Right
-        float fovXMultiplier;
-        float fovYMultiplier;
+        glm::dvec3 eye;
+        glm::dvec3 f;    // Forward
+        glm::dvec3 u;    // Up
+        glm::dvec3 r;    // Right
+        double fovXMultiplier;
+        double fovYMultiplier;
 
-        ::Raytracing::Ray viewRay(const float uvX, const float uvY) const;
+        ::Raytracing::Ray viewRay(const double uvX, const double uvY) const;
 
         std::string toString() const {
             std::stringstream ss;
@@ -32,19 +32,19 @@ class Camera {
         }
 
         Camera( 
-            const glm::vec3 eye,
-            const glm::vec3 lookAt,
-            const glm::vec3 up, 
-            float fovDegrees,
-            float aspectRatio
+            const glm::dvec3 eye,
+            const glm::dvec3 lookAt,
+            const glm::dvec3 up, 
+            double fovDegrees,
+            double aspectRatio
         ) {
             this->eye = eye;
             this->f = glm::normalize(lookAt - eye);
             this->r = glm::normalize(glm::cross(this->f, glm::normalize(up)));
             this->u = glm::cross(this->r, this->f);
-            this->fovYMultiplier = tan(glm::radians(fovDegrees * 0.5f));
+            this->fovYMultiplier = tan(glm::radians(fovDegrees * 0.5));
             // Each pixel should be square, so (fovX / fovY) = width / height
-            float fovX = fovDegrees * aspectRatio;
+            double fovX = fovDegrees * aspectRatio;
             //this->fovXMultiplier = tan(glm::radians(fovX * 0.5));
             this->fovXMultiplier = fovYMultiplier * aspectRatio;
         }
