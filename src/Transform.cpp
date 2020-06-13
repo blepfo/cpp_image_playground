@@ -27,13 +27,13 @@ glm::mat4 scale(const float x, const float y, const float z) {
 
 // Rodriguez rotation formula
 glm::mat4 rotate(const glm::vec3 axis, const float theta) {
-    glm::mat3 I = glm::mat3(1.0f);
-    glm::mat3 crossMat = glm::transpose(glm::mat3(
+    const glm::mat3 I = glm::mat3(1.0f);
+    const glm::mat3 crossMat = glm::transpose(glm::mat3(
         0, -axis[2], axis[1],
         axis[2], 0, -axis[0],
         -axis[1], axis[0], 0
     ));
-    glm::mat3 dotMat = glm::transpose(glm::mat3(
+    const glm::mat3 dotMat = glm::transpose(glm::mat3(
         axis[0]*axis[0], axis[0]*axis[1], axis[0]*axis[2],
         axis[1]*axis[0], axis[1]*axis[1], axis[1]*axis[2],
         axis[2]*axis[0], axis[2]*axis[1], axis[2]*axis[2]

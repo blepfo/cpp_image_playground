@@ -62,8 +62,8 @@ bool isInShadow(
 glm::vec3 whittedRayTrace(
     const ::Raytracing::Ray& viewRay, 
     const ::SimpleGraphics::Scene& scene,
-    glm::vec3 missColor,
-    int maxBounces
+    const glm::vec3 missColor,
+    const int maxBounces
 ) {
     if (maxBounces < 0) {
         // When maxBounces negative, finished raytracing
@@ -94,9 +94,7 @@ glm::vec3 whittedRayTrace(
             }
             // Weight reflection using specular
             glm::vec3 specular = material->specular(sceneHit.p);
-            glm::vec3 reflectedDir = glm::normalize(viewRay.d - (2.0f * glm::dot(viewRay.d, sceneHit.n) * sceneHit.n));
-
-            reflectedDir = glm::reflect(viewRay.d, sceneHit.n);
+            glm::vec3 reflectedDir = glm::reflect(viewRay.d, sceneHit.n);
 
             // Move reflection away from the surface to prevent numerical issues
             glm::vec3 reflectionOrigin = sceneHit.p + (sceneHit.n * 0.01f);

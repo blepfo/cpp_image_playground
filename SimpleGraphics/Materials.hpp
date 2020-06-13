@@ -50,13 +50,12 @@ class StaticMaterial : public ::SimpleGraphics::Material {
         std::string toString() const override {
             std::stringstream ss;
             ss
-                << "Material<\n"
+                << "SimpleGraphics::StaticMaterial\n"
                 << "\tdiffuse=(" << this->_diffuse[0] << ", " << this->_diffuse[1] << ", " << this->_diffuse[2] << ")\n"
                 << "\tspecular=(" << this->_specular[0] << ", " << this->_specular[1] << ", " << this->_specular[2] << ")\n"
                 << "\tambient=(" << this->_ambient[0] << ", " << this->_ambient[1] << ", " << this->_ambient[2] << ")\n"
                 << "\temission=(" << this->_emission[0] << ", " << this->_emission[1] << ", " << this->_emission[2] << ")\n"
                 << "\tshiny=" << this->_shiny
-                << ">"
             ;
             return ss.str();
         }

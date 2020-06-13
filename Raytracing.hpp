@@ -40,13 +40,13 @@ namespace Raytracing {
             Ray localRay(const Ray& worldRay) const {
                 // To intersect transformed object, we transform ray into local space,
                 // do intersection, then transform back to world space
-                glm::mat4 worldToLocal = glm::inverse(this->transform);
-                glm::vec4 localOriginH = worldToLocal * glm::vec4(worldRay.o, 1.0f);
-                glm::vec3 localRayOrigin = glm::vec3(localOriginH) / localOriginH[3];
+                const glm::mat4 worldToLocal = glm::inverse(this->transform);
+                const glm::vec4 localOriginH = worldToLocal * glm::vec4(worldRay.o, 1.0f);
+                const glm::vec3 localRayOrigin = glm::vec3(localOriginH) / localOriginH[3];
                 // Note that we do NOT normalize the local ray 
                 // to preserve the space scaling
-                glm::vec3 localRayDirection = glm::vec3(worldToLocal * glm::vec4(worldRay.d, 0.0f));
-                Ray localRay = { localRayOrigin, localRayDirection };
+                const glm::vec3 localRayDirection = glm::vec3(worldToLocal * glm::vec4(worldRay.d, 0.0f));
+                const Ray localRay = { localRayOrigin, localRayDirection };
                 return localRay;
             }
 

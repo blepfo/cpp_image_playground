@@ -13,9 +13,9 @@ namespace SimpleGraphics {
 class Light {
     public:
         virtual glm::vec3 illuminate(
-            glm::vec3 p,
-            glm::vec3 n,
-            glm::vec3 eye,
+            const glm::vec3 p,
+            const glm::vec3 n,
+            const glm::vec3 eye,
             const ::SimpleGraphics::Material* material
         ) const = 0;
 
@@ -35,9 +35,9 @@ class Light {
 class PointLight : public ::SimpleGraphics::Light {
     public:
         glm::vec3 illuminate(
-            glm::vec3 p,
-            glm::vec3 n,
-            glm::vec3 eye,
+            const glm::vec3 p,
+            const glm::vec3 n,
+            const glm::vec3 eye,
             const ::SimpleGraphics::Material* material
         ) const override;
         
@@ -55,12 +55,11 @@ class PointLight : public ::SimpleGraphics::Light {
         std::string toString() const override {
             std::stringstream ss;
             ss 
-                << "PointLight<\n"
+                << "SimpleGraphics::PointLight\n"
                 << "\tintensity=(" << this->i[0] << ", " << this->i[1] << ", " << this->i[2] << ")\n"
                 << "\tambient=(" << this->ambient[0] << ", " << this->ambient[1] << ", " << this->ambient[2] << ")\n"
                 << "\torigin=(" << this->o[0] << ", " << this->o[1] << ", " << this->o[2] << ")\n"
                 << "\tattenuation=(" << this->attenuation[0] << ", " << this->attenuation[1] << ", " << this->attenuation[2] << ")\n"
-                << ">"
             ;
             return ss.str();
         }
@@ -72,9 +71,9 @@ class PointLight : public ::SimpleGraphics::Light {
 class DirectionLight : public ::SimpleGraphics::Light {
     public:
         glm::vec3 illuminate(
-            glm::vec3 p,
-            glm::vec3 n,
-            glm::vec3 eye,
+            const glm::vec3 p,
+            const glm::vec3 n,
+            const glm::vec3 eye,
             const ::SimpleGraphics::Material* material
         ) const override;
 
@@ -91,11 +90,10 @@ class DirectionLight : public ::SimpleGraphics::Light {
         std::string toString() const override {
             std::stringstream ss;
             ss 
-                << "DirectionLight<\n"
-                << "\tintensity=(" << this->i[0] << ", " << this->i[1] << ", " << this->i[2] << ")\n"
-                << "\tambient=(" << this->ambient[0] << ", " << this->ambient[1] << ", " << this->ambient[2] << ")\n"
-                << "\tdirection=(" << this->d[0] << ", " << this->d[1] << ", " << this->d[2] << ")\n"
-                << ">"
+                << "SimpleGraphics::DirectionLight"
+                << "\n\tintensity=(" << this->i[0] << ", " << this->i[1] << ", " << this->i[2] << ")"
+                << "\n\tambient=(" << this->ambient[0] << ", " << this->ambient[1] << ", " << this->ambient[2] << ")"
+                << "\n\tdirection=(" << this->d[0] << ", " << this->d[1] << ", " << this->d[2] << ")"
             ;
             return ss.str();
         }

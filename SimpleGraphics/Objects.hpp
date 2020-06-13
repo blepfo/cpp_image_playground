@@ -34,10 +34,10 @@ class Sphere : public ::SimpleGraphics::Intersectable {
         std::string toString() const override {
             std::stringstream ss;
             ss 
-                << "Sphere<\n"
-                << "\tradius=" << this->r << "\n"
-                << "\tcenter=(" << this->c[0] << ", " << this->c[1] << ", " << this->c[2] << ")\n"
-                << ">"
+                << "SimpleGraphics::Sphere"
+                << "\n\tradius=" << this->r
+                << "\n\tcenter=(" << this->c[0] << ", " << this->c[1] << ", " << this->c[2] << ")"
+                << "\n\tmatId=" << this->materialId << ")"
             ;
             return ss.str();
         }
@@ -59,9 +59,9 @@ class Triangle : public ::SimpleGraphics::Intersectable {
         Raytracing::HitInfo intersect(const Raytracing::Ray& ray) const override;
 
         Triangle(
-            glm::vec3 A, 
-            glm::vec3 B, 
-            glm::vec3 C, 
+            const glm::vec3 A, 
+            const glm::vec3 B, 
+            const glm::vec3 C, 
             int materialId
         ) 
             : A(A), B(B), C(C),
@@ -72,11 +72,11 @@ class Triangle : public ::SimpleGraphics::Intersectable {
         std::string toString() const override {
             std::stringstream ss;
             ss 
-                << "Triangle<\n"
-                << "\tA=(" << this->A[0] << ", " << this->A[1] << ", " << this->A[2] << ")\n"
-                << "\tB=(" << this->B[0] << ", " << this->B[1] << ", " << this->B[2] << ")\n"
-                << "\tC=(" << this->C[0] << ", " << this->C[1] << ", " << this->C[2] << ")\n"
-                << ">"
+                << "SimpleGraphics::Triangle"
+                << "\n\tA=(" << this->A[0] << ", " << this->A[1] << ", " << this->A[2] << ")"
+                << "\n\tB=(" << this->B[0] << ", " << this->B[1] << ", " << this->B[2] << ")"
+                << "\n\tC=(" << this->C[0] << ", " << this->C[1] << ", " << this->C[2] << ")"
+                << "\n\tmatId=" << this->materialId
             ;
             return ss.str();
         }

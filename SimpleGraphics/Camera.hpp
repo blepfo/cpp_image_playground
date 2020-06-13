@@ -24,10 +24,9 @@ class Camera {
         std::string toString() const {
             std::stringstream ss;
             ss 
-                << "Camera<"
-                << " eye=(" << this->eye[0] << " " << this->eye[1] << " " << this->eye[2] << ")"
-                << " f=(" << this->f[0] << " " << this->f[1] << " " << this->f[2] << ")"
-                << " >"
+                << "SimpleGraphics::Camera"
+                << "\n\teye=(" << this->eye[0] << " " << this->eye[1] << " " << this->eye[2] << ")"
+                << "\n\tf=(" << this->f[0] << " " << this->f[1] << " " << this->f[2] << ")"
             ;
             return ss.str();
         }
@@ -41,13 +40,13 @@ class Camera {
         ) {
             this->eye = eye;
             this->f = glm::normalize(lookAt - eye);
-            this->r = glm::normalize(glm::cross(this->f, up));
+            this->r = glm::normalize(glm::cross(this->f, glm::normalize(up)));
             this->u = glm::cross(this->r, this->f);
-            this->fovYMultiplier = tan(glm::radians(fovDegrees / 2.0f));
-            // Each pixel should be square, wo fov = (fovY / height) * width
-            // Then (fovX / fovY) = width / height
+            this->fovYMultiplier = tan(glm::radians(fovDegrees * 0.5f));
+            // Each pixel should be square, so (fovX / fovY) = width / height
             float fovX = fovDegrees * aspectRatio;
-            this->fovXMultiplier = tan(glm::radians(fovX / 2.0f));
+            //this->fovXMultiplier = tan(glm::radians(fovX * 0.5));
+            this->fovXMultiplier = fovYMultiplier * aspectRatio;
         }
 };
 

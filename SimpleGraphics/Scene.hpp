@@ -45,15 +45,18 @@ class Scene {
             ss << "----- SCENE -----";
             // Lights
             ss << "\n-- LIGHTS --";
-            for (int i = 0; i < lights.size(); i++) {
-                ss << "\n" << i << " - " << lights[i]->toString();
+            for (int i = 0; i < this->lights.size(); i++) {
+                ss << "\n" << i << " - " << this->lights[i]->toString();
             }
             // Materials
             ss << "\n-- MATERIALS --";
-            for (int i = 0; i < materials.size(); i++) {
-                ss << "\n" << i << " - " << materials[i]->toString();
+            for (int i = 0; i < this->materials.size(); i++) {
+                ss << "\n" << i << " - " << this->materials[i]->toString();
             }
-            // TODO - objects
+            ss << "\n-- OBJECTS --";
+            for (int i = 0; i < this->objects.size(); i++) {
+                ss << "\n" << i << " - " << this->objects[i]->toString();
+            }
             return ss.str();
         }
 
