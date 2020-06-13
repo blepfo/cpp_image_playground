@@ -56,9 +56,8 @@ glm::dvec3 illuminate(
     const double intensity_diffuse = std::max(0.0, glm::dot(lightDir, n));
     const glm::dvec3 illumination_diffuse = intensity_diffuse * material->diffuse(p);
     // Specular
-    //const glm::dvec3 viewDir = glm::normalize(eye - p);
-    //const glm::dvec3 halfVector = glm::normalize(viewDir + lightDir);
-    const glm::dvec3 halfVector = glm::normalize(eye + lightDir);
+    const glm::dvec3 viewDir = glm::normalize(eye - p);
+    const glm::dvec3 halfVector = glm::normalize(viewDir + lightDir);
     const double intensity_specular = std::pow(std::max(0.0, glm::dot(halfVector, n)), material->shiny(p));
     const glm::dvec3 illumination_specular = intensity_specular * material->specular(p);
 
