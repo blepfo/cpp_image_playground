@@ -58,17 +58,6 @@ class Triangle : public ::SimpleGraphics::Intersectable {
     public:
         Raytracing::HitInfo intersect(const Raytracing::Ray& ray) const override;
 
-        Triangle(
-            const glm::dvec3 A, 
-            const glm::dvec3 B, 
-            const glm::dvec3 C, 
-            int materialId
-        ) 
-            : A(A), B(B), C(C),
-            ::SimpleGraphics::Intersectable(materialId) {
-                this->normal = glm::normalize(glm::cross(B-A, C-A));
-            }
-
         std::string toString() const override {
             std::stringstream ss;
             ss 
@@ -82,11 +71,22 @@ class Triangle : public ::SimpleGraphics::Intersectable {
         }
 
         Triangle(
-            glm::dvec3 A, 
-            glm::dvec3 B, 
-            glm::dvec3 C, 
+            const glm::dvec3 A, 
+            const glm::dvec3 B, 
+            const glm::dvec3 C, 
+            int materialId
+        ) 
+            : A(A), B(B), C(C),
+            ::SimpleGraphics::Intersectable(materialId) {
+                this->normal = glm::normalize(glm::cross(B-A, C-A));
+            }
+
+        Triangle(
+            const glm::dvec3 A, 
+            const glm::dvec3 B, 
+            const glm::dvec3 C, 
             int materialId, 
-            glm::dmat4 transform
+            const glm::dmat4 transform
         )
             : A(A), B(B), C(C),
             ::SimpleGraphics::Intersectable(materialId, transform) {
@@ -98,8 +98,60 @@ class Triangle : public ::SimpleGraphics::Intersectable {
         glm::dvec3 A;
         glm::dvec3 B;
         glm::dvec3 C;
+        // TODO - vertex normal
         glm::dvec3 normal;
 
+};
+
+/**
+ * Class representing a triangle whose vertices are pointers to glm::dvec3
+ * Useful when e.g. all vertices in a scene are stored elsewhere and we want
+ * a triangle that references them.
+ */
+class RefTriangle : public ::SimpleGraphics::Intersectable {
+    public:
+        Raytracing::HitInfo intersect(const Raytracing::Ray& ray) const override;
+
+        std::string toString() const override {
+            std::stringstream ss;
+            ss 
+                << "SimpleGraphics::RefTriangle"
+                << "\n\tA=(" << (*this->A)[0] << ", " << (*this->A)[1] << ", " << (*this->A)[2] << ")"
+                << "\n\tB=(" << (*this->B)[0] << ", " << (*this->B)[1] << ", " << (*this->B)[2] << ")"
+                << "\n\tC=(" << (*this->C)[0] << ", " << (*this->C)[1] << ", " << (*this->C)[2] << ")"
+                << "\n\tmatId=" << this->materialId
+            ;
+            return ss.str();
+        }
+
+        RefTriangle(
+            glm::dvec3* A,
+            glm::dvec3* B,
+            glm::dvec3* C,
+            int materialId
+        ) 
+            : A(A), B(B), C(C),
+            ::SimpleGraphics::Intersectable(materialId) {
+                this->normal = glm::normalize(glm::cross(*B-*A, *C-*A));
+            }
+
+        RefTriangle(
+            glm::dvec3* A, 
+            glm::dvec3* B, 
+            glm::dvec3* C, 
+            int materialId, 
+            glm::dmat4 transform
+        )
+            : A(A), B(B), C(C),
+            ::SimpleGraphics::Intersectable(materialId, transform) {
+                this->normal = glm::normalize(glm::cross(*B-*A, *C-*A));
+            }
+    private: 
+        glm::dvec3* A;
+        glm::dvec3* B;
+        glm::dvec3* C;
+        // TODO - vertex normals
+        glm::dvec3 normal;
 };
 
 } // namespace SimpleGraphic

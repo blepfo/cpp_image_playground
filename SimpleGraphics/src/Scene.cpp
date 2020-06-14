@@ -79,7 +79,7 @@ glm::vec3 whittedRayTrace(
                 ::SimpleGraphics::Light* currentLight = scene.lights[lightNum];
                 glm::dvec3 lightDir = currentLight->getDirection(sceneHit.p);
                 double lightDistance = currentLight->getDistance(sceneHit.p);
-                glm::dvec3 shadowRayOrigin = sceneHit.p + (sceneHit.n * 0.001);
+                glm::dvec3 shadowRayOrigin = sceneHit.p + (sceneHit.n * 0.00001);
                 bool shadowed = isInShadow(shadowRayOrigin, lightDir, lightDistance, scene);
 
                 // No light contribution if in shadow
@@ -97,7 +97,7 @@ glm::vec3 whittedRayTrace(
             glm::dvec3 reflectedDir = glm::reflect(viewRay.d, sceneHit.n);
 
             // Move reflection away from the surface to prevent numerical issues
-            glm::dvec3 reflectionOrigin = sceneHit.p + (sceneHit.n * 0.001);
+            glm::dvec3 reflectionOrigin = sceneHit.p + (sceneHit.n * 0.00001);
             ::Raytracing::Ray reflectionRay = { reflectionOrigin, reflectedDir };
             glm::dvec3 reflectionColor = whittedRayTrace(
                 reflectionRay,

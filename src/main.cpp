@@ -120,17 +120,19 @@ int main() {
     };
 
     glm::dmat4 planeTransform = Transform::translate(-2.5, -0.5, 1.0);
-    SimpleGraphics::Triangle tri1 = {
-        glm::dvec3(5.0, 0.0, 0.0),
-        glm::dvec3(5.0, 0.0, -5.0),
-        glm::dvec3(0.0, 0.0, 0.0),
+
+    glm::dvec3 fr = glm::dvec3(5.0, 0.0, 0.0);
+    glm::dvec3 br = glm::dvec3(5.0, 0.0, -5.0);
+    glm::dvec3 fl = glm::dvec3(0.0, 0.0, 0.0);
+    glm::dvec3 bl = glm::dvec3(0.0, 0.0, -5.0);
+
+    SimpleGraphics::RefTriangle tri1 = {
+        &fr, &br, &fl,
         planeMaterial,
         planeTransform
     };
-    SimpleGraphics::Triangle tri2 = {
-        glm::dvec3(0.0, 0.0, 0.0),
-        glm::dvec3(5.0, 0.0, -5.0),
-        glm::dvec3(0.0, 0.0, -5.0),
+    SimpleGraphics::RefTriangle tri2 = {
+        &fl, &br, &bl,
         planeMaterial,
         planeTransform
     };
@@ -164,11 +166,9 @@ int main() {
     };
 
     PixelDraw::pixelShade(image, width, height, traceFunc, 8);
-     std::cout << "DONE WITH SHADE" << std::endl;
 
     // Save output image
     std::string ppmString = SaveUtils::rgbToPpm(image, width, height);
     SaveUtils::writePpm(OUTPUT_FILE_PATH, ppmString);
-
     return 0;
 }

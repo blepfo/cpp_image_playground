@@ -7,6 +7,17 @@
 
 namespace SimpleGraphics {
 
+::Raytracing::HitInfo intersectTriangle(
+    const ::Raytracing::Ray& ray, 
+    const glm::dvec3 A,
+    const glm::dvec3 B,
+    const glm::dvec3 C,
+    // TODO vertex normals
+    const glm::dvec3 normal,
+    const int materialId
+);
+
+
 ::Raytracing::HitInfo Sphere::intersect(const ::Raytracing::Ray& ray) const {
     const glm::dvec3 originMinusCenter = ray.o - this->c;
     const double a = glm::dot(ray.d, ray.d);
@@ -15,7 +26,7 @@ namespace SimpleGraphics {
 
     double tIntersection = -1.0;
     const double discriminant = (b*b) - (4.0 * a * c);
-    if (discriminant < 0.0) {
+    if (discriminant < 0.00001) {
         // Ray does not intersect sphere (forward or backward)
         return ::Raytracing::noHit;
     } else {
@@ -50,28 +61,51 @@ namespace SimpleGraphics {
 
 
 ::Raytracing::HitInfo Triangle::intersect(const ::Raytracing::Ray& ray) const {
+    return intersectTriangle(ray, this->A, this->B, this->C, this->normal, this->materialId);
+}
+
+::Raytracing::HitInfo RefTriangle::intersect(const ::Raytracing::Ray& ray) const {
+    return intersectTriangle(
+        ray, 
+        *(this->A), 
+        *(this->B), 
+        *(this->C), 
+        this->normal, 
+        this->materialId
+    );
+}
+
+::Raytracing::HitInfo intersectTriangle(
+    const ::Raytracing::Ray& ray, 
+    const glm::dvec3 A,
+    const glm::dvec3 B,
+    const glm::dvec3 C,
+    // TODO vertex normals
+    const glm::dvec3 normal,
+    const int materialId
+) {
     // Ray-plane intersection using Moller-Trumbore
     // Triangle vertices = A B C
     // Barycentric coordinates = alpha beta gamma
-    const glm::dvec3 AB = this->B - this->A;
-    const glm::dvec3 AC = this->C - this->A;
+    const glm::dvec3 AB = B - A;
+    const glm::dvec3 AC = C - A;
 
     // Reused calculations
-    const glm::dvec3 AO = ray.o - this->A;
+    const glm::dvec3 AO = ray.o - A;
     const glm::dvec3 AOxAB = glm::cross(AO, AB);
     const glm::dvec3 DxAC = glm::cross(ray.d, AC);
     
     const double totalDeterminant = glm::dot(DxAC, AB);
     // If determinant is 0, unable to solve system
     // If determinant is < 0, then ray is in same direction as normal == backface
-    if (totalDeterminant < 0.0000001) {
+    if (totalDeterminant <= 0.00001) {
         return ::Raytracing::noHit;
     }
 
     const double invTotalDeterminant = 1.0 / totalDeterminant;
 
     const double t = invTotalDeterminant * glm::dot(AOxAB, AC);
-    if (t < 0.0000001) return ::Raytracing::noHit;
+    if (t < 0.0) return ::Raytracing::noHit;
 
     const double beta = invTotalDeterminant * glm::dot(DxAC, AO);
     if (beta < 0.0 || beta > 1.0) return ::Raytracing::noHit;
@@ -85,8 +119,8 @@ namespace SimpleGraphics {
     const ::Raytracing::HitInfo triangleHit = {
         intersectionDistance,               // distance
         intersectionPoint,                  // p
-        this->normal,                       // n
-        this->materialId                    // material
+        normal,                       // n
+        materialId                    // material
     };
     return triangleHit;
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include<cmath>
 #include<string>
 #include<sstream>
 
@@ -25,8 +26,8 @@ class Camera {
             std::stringstream ss;
             ss 
                 << "SimpleGraphics::Camera"
-                << "\n\teye=(" << this->eye[0] << " " << this->eye[1] << " " << this->eye[2] << ")"
-                << "\n\tf=(" << this->f[0] << " " << this->f[1] << " " << this->f[2] << ")"
+                << "\n\teye=(" << this->eye[0] << ", " << this->eye[1] << ", " << this->eye[2] << ")"
+                << "\n\tf=(" << this->f[0] << ", " << this->f[1] << ", " << this->f[2] << ")"
             ;
             return ss.str();
         }
@@ -42,10 +43,9 @@ class Camera {
             this->f = glm::normalize(lookAt - eye);
             this->r = glm::normalize(glm::cross(this->f, glm::normalize(up)));
             this->u = glm::cross(this->r, this->f);
-            this->fovYMultiplier = tan(glm::radians(fovDegrees * 0.5));
+            this->fovYMultiplier = tan((fovDegrees * M_PI) / 360.0);
             // Each pixel should be square, so (fovX / fovY) = width / height
             double fovX = fovDegrees * aspectRatio;
-            //this->fovXMultiplier = tan(glm::radians(fovX * 0.5));
             this->fovXMultiplier = fovYMultiplier * aspectRatio;
         }
 };
