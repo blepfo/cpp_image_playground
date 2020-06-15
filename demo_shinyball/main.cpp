@@ -6,6 +6,8 @@
 
 #include <glm/glm.hpp>
 
+#include <FreeImage.h>
+
 // TODO
 #include "PixelDraw.hpp"
 #include "Raytracing.hpp"
@@ -18,33 +20,10 @@
 #include "SimpleGraphics/Objects.hpp"
 #include "SimpleGraphics/Scene.hpp"
 
-const char* OUTPUT_FILE_PATH = "./test.ppm";
-
-/** 
- *  Assumes uvX and uvY are in bi-unit square
- */
-glm::vec3 whittedRayTracePixelFunc(
-    const SimpleGraphics::Camera& camera, 
-    const SimpleGraphics::Scene& scene,
-    const int maxBounces,
-    double uvX,
-    double uvY
-) {
-    Raytracing::Ray viewRay = camera.viewRay(uvX, uvY);
-
-    return SimpleGraphics::whittedRayTrace(
-        viewRay, 
-        scene,
-        glm::dvec3(0.0, 0.0, 0.2),
-        maxBounces
-    );
-}
-
-
 int main() {
     int width = 400;
     int height = 300;
-    int maxBounces = 1;
+    int maxBounces = 5;
 
     // Initialize image
     std::cout << "Initialize image with shape (" << width << ", " << height << ")" << std::endl;
@@ -144,31 +123,35 @@ int main() {
 
     std::cout << scene.toString() << std::endl;
 
+    // Define PixelFunc that raytraces the scene
     const double halfWidth = (double)(width - 1) / 2.0;
     const double halfHeight = (double)(height - 1) / 2.0;
     const double invHalfWidth = 1.0 / halfWidth;
     const double invHalfHeight  = 1.0 / halfHeight;
     PixelDraw::PixelFunc traceFunc = 
         [&camera, &scene, halfWidth, invHalfWidth, halfHeight, invHalfHeight, maxBounces]
-        //[&camera, &scene, maxBounces, height, width]
-        //(double x, double y) {
         (int x, int y) {
+        // Map pixel coords into bi-unit square
         double uvX = ((double)x + 0.5 - halfWidth) * invHalfWidth;
         double uvY = ((double)halfHeight - y + 0.5) * invHalfHeight;
+        Raytracing::Ray viewRay = camera.viewRay(uvX, uvY);
 
-        return whittedRayTracePixelFunc(
-            camera, 
-            scene, 
-            maxBounces, 
-            uvX,
-            uvY 
-        );
+        return SimpleGraphics::whittedRayTrace(
+            viewRay, 
+            scene,
+            glm::dvec3(0.0, 0.0, 0.2),
+            maxBounces
+        );       
     };
 
     PixelDraw::pixelShade(image, width, height, traceFunc, 8);
 
-    // Save output image
-    std::string ppmString = SaveUtils::rgbToPpm(image, width, height);
-    SaveUtils::writePpm(OUTPUT_FILE_PATH, ppmString);
+    // Save output PPM
+    SaveUtils::savePpm(image, width, height, "./shinyball.ppm");
+    // Save output PNG
+    FreeImage_Initialise();
+    SaveUtils::savePng(image, width, height, "./shinyball.png");
+    FreeImage_DeInitialise();
+
     return 0;
 }

@@ -9,21 +9,34 @@ SG=$(MAKEFILE_DIR)SimpleGraphics
 SG_SRC=$(SG)/src
 SG_BUILD=$(BUILD)/SimpleGraphics
 
+# Location of FreeImage install
+FREEIMAGE_DIST=/usr/local/include/FreeImage/Dist
+
 
 CC=g++ -std=c++17
+CPP_ARGS=-Wall
 
-all: directories $(BIN)/main.o
+all: directories demo
 
-$(BIN)/main.o: $(SRC)/main.cpp $(LIB)/CppImage.a $(LIB)/SimpleGraphics.a 
+
+# Demos
+demo: directories demo_shinyball
+
+demo_shinyball: $(BIN)/demo_shinyball
+
+$(BIN)/demo_shinyball: demo_shinyball/main.cpp $(LIB)/CppImage.a $(LIB)/SimpleGraphics.a
 	$(info $@)
-	$(CC) \
+	$(CC) $(CPP_ARGS) \
 	-lomp \
 	-I/usr/local/include \
 	-I$(MAKEFILE_DIR) \
+	-I$(FREEIMAGE_DIST) \
+	-L$(FREEIMAGE_DIST) -lfreeimage \
 	$(LIB)/CppImage.a \
 	$(LIB)/SimpleGraphics.a \
 	-o $@ \
-	$(SRC)/main.cpp
+	$(filter %.cpp %.a, $^)
+
 
 # Object archives for top level CppImage + SimpleGraphics
 $(LIB)/CppImage.a: $(BUILD)/PixelDraw.o  $(BUILD)/SaveUtils.o $(BUILD)/Transform.o $(MAKEFILE_DIR)Raytracing.hpp
@@ -71,6 +84,14 @@ $(BUILD)/PixelDraw.o: $(SRC)/PixelDraw.cpp $(MAKEFILE_DIR)PixelDraw.hpp
 	$(CC) -c \
 	-Xpreprocessor -fopenmp \
 	-I/usr/local/include \
+	-I$(MAKEFILE_DIR) \
+	-o $@ $<
+
+$(BUILD)/SaveUtils.o: $(SRC)/SaveUtils.cpp $(MAKEFILE_DIR)SaveUtils.hpp
+	$(info $@)
+	$(CC) -c \
+	-I/usr/local/include \
+	-I$(FREEIMAGE_DIST) \
 	-I$(MAKEFILE_DIR) \
 	-o $@ $<
 
