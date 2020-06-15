@@ -1,5 +1,6 @@
 *.o
 *.swp
-obj/
 bin/
+build/
+lib/
 .DS_STORE
