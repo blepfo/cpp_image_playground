@@ -74,6 +74,14 @@ class StaticMaterial : public ::SimpleGraphics::Material {
               _shiny(shiny) {}
 };
 
+static ::SimpleGraphics::StaticMaterial LightMaterial = ::SimpleGraphics::StaticMaterial(
+    glm::dvec3(0.0),            // Diffuse
+    glm::dvec3(0.0),            // Specular
+    glm::dvec3(0.0),            // Ambient
+    glm::dvec3(1.0),            // Emission
+    0                           // Shiny
+);
+
 class CheckerboardXZ : public ::SimpleGraphics::Material {
     public:
         double scaleX;

@@ -15,14 +15,22 @@ namespace SimpleGraphics {
 class Intersectable : public Raytracing::RayIntersectable {
     public:
         int materialId;
+        bool castShadows = true;
 
         virtual std::string toString() const = 0;
 
         Intersectable(int materialId) 
             : materialId(materialId), Raytracing::RayIntersectable() {}
 
+        Intersectable(int materialId, bool castShadows) 
+            : materialId(materialId), castShadows(castShadows), Raytracing::RayIntersectable() {}
+
         Intersectable(int materialId, glm::dmat4 transform) 
             : materialId(materialId), Raytracing::RayIntersectable(transform) {}
+
+        Intersectable(int materialId, glm::dmat4 transform, bool castShadows) 
+            : materialId(materialId), castShadows(castShadows), Raytracing::RayIntersectable(transform) {}
+
 };
 
 
@@ -38,15 +46,16 @@ class Sphere : public ::SimpleGraphics::Intersectable {
                 << "\n\tradius=" << this->r
                 << "\n\tcenter=(" << this->c[0] << ", " << this->c[1] << ", " << this->c[2] << ")"
                 << "\n\tmatId=" << this->materialId
+                << "\n\tcastShadows=" << this->castShadows
             ;
             return ss.str();
         }
 
-        Sphere(double r, glm::dvec3 c, int materialId) 
-            : r(r), c(c), ::SimpleGraphics::Intersectable(materialId) {}
+        Sphere(double r, glm::dvec3 c, int materialId, bool castShadows=true) 
+            : r(r), c(c), ::SimpleGraphics::Intersectable(materialId, castShadows) {}
 
-        Sphere(double r, glm::dvec3 c, int materialId, glm::dmat4 transform) 
-            : r(r), c(c), ::SimpleGraphics::Intersectable(materialId, transform) {}
+        Sphere(double r, glm::dvec3 c, int materialId, glm::dmat4 transform, bool castShadows=true) 
+            : r(r), c(c), ::SimpleGraphics::Intersectable(materialId, transform, castShadows) {}
 
     private:
         const double r;
@@ -74,10 +83,11 @@ class Triangle : public ::SimpleGraphics::Intersectable {
             const glm::dvec3 A, 
             const glm::dvec3 B, 
             const glm::dvec3 C, 
-            int materialId
+            int materialId,
+            bool castShadows=true
         ) 
             : A(A), B(B), C(C),
-            ::SimpleGraphics::Intersectable(materialId) {
+            ::SimpleGraphics::Intersectable(materialId, castShadows) {
                 this->normal = glm::normalize(glm::cross(B-A, C-A));
             }
 
@@ -86,10 +96,11 @@ class Triangle : public ::SimpleGraphics::Intersectable {
             const glm::dvec3 B, 
             const glm::dvec3 C, 
             int materialId, 
-            const glm::dmat4 transform
+            const glm::dmat4 transform,
+            bool castShadows=true
         )
             : A(A), B(B), C(C),
-            ::SimpleGraphics::Intersectable(materialId, transform) {
+        ::SimpleGraphics::Intersectable(materialId, transform, castShadows) {
                 this->normal = glm::normalize(glm::cross(B-A, C-A));
             }
 
@@ -128,10 +139,11 @@ class RefTriangle : public ::SimpleGraphics::Intersectable {
             glm::dvec3* A,
             glm::dvec3* B,
             glm::dvec3* C,
-            int materialId
+            int materialId,
+            bool castShadows=true
         ) 
             : A(A), B(B), C(C),
-            ::SimpleGraphics::Intersectable(materialId) {
+            ::SimpleGraphics::Intersectable(materialId, castShadows) {
                 this->normal = glm::normalize(glm::cross(*B-*A, *C-*A));
             }
 
@@ -140,10 +152,11 @@ class RefTriangle : public ::SimpleGraphics::Intersectable {
             glm::dvec3* B, 
             glm::dvec3* C, 
             int materialId, 
-            glm::dmat4 transform
+            glm::dmat4 transform,
+            bool castShadows=true
         )
             : A(A), B(B), C(C),
-            ::SimpleGraphics::Intersectable(materialId, transform) {
+            ::SimpleGraphics::Intersectable(materialId, transform, castShadows) {
                 this->normal = glm::normalize(glm::cross(*B-*A, *C-*A));
             }
     private: 

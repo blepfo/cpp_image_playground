@@ -11,11 +11,20 @@
 
 namespace SimpleGraphics {
 
-::Raytracing::HitInfo rayCast(const ::Raytracing::Ray& ray, const ::SimpleGraphics::Scene& scene) {
+::Raytracing::HitInfo rayCast(
+    const ::Raytracing::Ray& ray, 
+    const ::SimpleGraphics::Scene& scene,
+    const bool shadowRay
+) {
     ::Raytracing::HitInfo sceneHit = ::Raytracing::noHit;
     ::SimpleGraphics::Intersectable* hitObject = NULL;
     for (int objectNum = 0; objectNum < scene.objects.size(); objectNum++) {
         ::SimpleGraphics::Intersectable* currentObject = scene.objects[objectNum];
+
+        // Don't bother intersecting if this is a shadow ray and the object doesn't cast shadows
+        bool canIntersectObject = (!shadowRay || (shadowRay && currentObject->castShadows));
+        if (!canIntersectObject) continue;
+
         // Intersect in local space, then transform back to world space
         ::Raytracing::Ray localRay = currentObject->localRay(ray);
         ::Raytracing::HitInfo localHit = currentObject->intersect(localRay);
@@ -31,8 +40,8 @@ namespace SimpleGraphics {
                 currentObject->localNormalToWorld(localHit.n),
                 localHit.materialId
             };
+            // Found first forward intersection OR found closer forward intersection
             if (sceneHit.distance < 0.0 || (intersectionDistance < sceneHit.distance)) {
-                // Found first forward intersection OR found closer forward intersection
                 sceneHit = worldHit;
                 hitObject = currentObject;
             }
@@ -48,7 +57,7 @@ bool isInShadow(
     const ::SimpleGraphics::Scene& scene
 ) {
     const ::Raytracing::Ray rayTowardsLight = { shadowRayOrigin, glm::normalize(lightDir) };
-    const ::Raytracing::HitInfo hitOnWayTowardsLight = rayCast(rayTowardsLight, scene);
+    const ::Raytracing::HitInfo hitOnWayTowardsLight = rayCast(rayTowardsLight, scene, true);
 
     if (hitOnWayTowardsLight.distance > 0.0) {
         return hitOnWayTowardsLight.distance < lightDistance;

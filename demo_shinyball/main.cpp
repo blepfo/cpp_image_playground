@@ -21,8 +21,8 @@
 #include "SimpleGraphics/Scene.hpp"
 
 int main() {
-    int width = 400;
-    int height = 300;
+    int width = 800;
+    int height = 600;
     int maxBounces = 5;
 
     // Initialize image
@@ -35,40 +35,39 @@ int main() {
 
     // CAMERA
     SimpleGraphics::Camera camera = SimpleGraphics::Camera(
-        glm::dvec3(-1.5, 0.5, 2.0), 
-        glm::dvec3(0.0, 0.0, 0.0),
+        glm::dvec3(-5.0, 2.5, 5.0), 
+        glm::dvec3(0.0, 1.5, 0.0),
         glm::dvec3(0.0, 1.0, 0.0),
-        60.0,
+        50.0,
         (double)width / (double)height
     );
 
     // CREATE SCENE
     SimpleGraphics::Scene scene = SimpleGraphics::Scene();
 
-    // LIGHTS
-    SimpleGraphics::PointLight pointLight1 = {
-        glm::dvec3(1.5, 2.0, 0.5),   // Origin
-        glm::dvec3(0.0, 0.0, 1.0),    // Attenuation
-        glm::dvec3(7.5),                // Intensity
-        glm::dvec3(0.0, 0.0, 0.0),    // Ambient
-    };
-    SimpleGraphics::PointLight pointLight2 = {
-        glm::dvec3(-2.5, 3.0, -0.5),   // Origin
-        glm::dvec3(0.0, 0.0, 1.0),     // Attenuation
-        glm::dvec3(10.0),                // Intensity
-        glm::dvec3(0.0, 0.0, 0.0),    // Ambient
-    };
-
-    scene.addLight(&pointLight1);
-    scene.addLight(&pointLight2);
-
     // MATERIALS
     SimpleGraphics::StaticMaterial redMat = {
         glm::dvec3(0.9, 0.0, 0.0),    // Diffuse
-        glm::dvec3(0.5),                // Specular
+        glm::dvec3(0.4),                // Specular
         glm::dvec3(0.1, 0.0, 0.0),    // Ambient
         glm::dvec3(0.0, 0.0, 0.0),    // Emission
         128.0                           // Shiny
+    };
+
+    SimpleGraphics::StaticMaterial blueMat = {
+        glm::dvec3(0.0, 0.1, 0.9),    // Diffuse
+        glm::dvec3(0.6),                // Specular
+        glm::dvec3(0.1, 0.0, 0.0),    // Ambient
+        glm::dvec3(0.0, 0.0, 0.0),    // Emission
+        256.0                           // Shiny
+    };
+    
+    SimpleGraphics::StaticMaterial greenMat = {
+        glm::dvec3(0.0, 0.8, 0.2),    // Diffuse
+        glm::dvec3(0.6),                // Specular
+        glm::dvec3(0.1, 0.0, 0.0),    // Ambient
+        glm::dvec3(0.0, 0.0, 0.0),    // Emission
+        256.0                           // Shiny
     };
 
     SimpleGraphics::CheckerboardXZ planeMat = {
@@ -79,45 +78,75 @@ int main() {
         glm::dvec3(0.2),   // Specular
         64.0               // Shiny
     };
-
+    
     int redMaterial = scene.addMaterial(&redMat);
+    int blueMaterial = scene.addMaterial(&blueMat);
+    int greenMaterial = scene.addMaterial(&greenMat);
     int planeMaterial = scene.addMaterial(&planeMat);
+    int lightMaterial = scene.addMaterial(&SimpleGraphics::LightMaterial);
+
+
+    // LIGHTS
+    SimpleGraphics::PointLight pointLightRight = {
+        glm::dvec3(1.5, 3.4, 0.5),   // Origin
+        glm::dvec3(0.0, 0.0, 1.0),    // Attenuation
+        glm::dvec3(5.0),                // Intensity
+        glm::dvec3(0.0, 0.0, 0.0),    // Ambient
+    };
+    SimpleGraphics::PointLight pointLightLeft = {
+        glm::dvec3(-2.5, 3.0, -0.5),   // Origin
+        glm::dvec3(0.0, 0.0, 1.0),     // Attenuation
+        glm::dvec3(5.0),                // Intensity
+        glm::dvec3(0.0, 0.0, 0.0),    // Ambient
+    };
+
+    scene.addVisiblePointLight(&pointLightRight, 0.2, lightMaterial);
+    scene.addVisiblePointLight(&pointLightLeft, 0.2, lightMaterial);
+
 
     // OBJECTS
-    SimpleGraphics::Sphere sphere1 = { 
-        0.5,                           // Radius
-        glm::dvec3(0.0, 0.0, 0.0),    // Center
+    SimpleGraphics::Sphere sphereRightRed = { 
+        0.8,                           // Radius
+        glm::dvec3(0.7, 1.0, 2.5),    // Center
         redMaterial,                    // Material
-        Transform::scale(1.0, 2.0, 1.0)
     };
 
-    SimpleGraphics::Sphere sphere2 = { 
-        0.5,                           // Radius
-        glm::dvec3(0.0, 0.0, 0.0),    // Center
+    SimpleGraphics::Sphere sphereLeftRed = { 
+        0.6,                           // Radius
+        glm::dvec3(-1.5, 1.0, -2.0),    // Center
         redMaterial,                    // Material
-        Transform::translate(-0.5, 0.5, -0.7) 
     };
 
-    glm::dmat4 planeTransform = Transform::translate(-2.5, -0.5, 1.0);
+    SimpleGraphics::Sphere sphereLeftGreen = { 
+        0.7,                           // Radius
+        glm::dvec3(-2.0, 0.9, 0.75),    // Center
+        greenMaterial,                    // Material
+    };
 
-    glm::dvec3 fr = glm::dvec3(5.0, 0.0, 0.0);
+    SimpleGraphics::Sphere sphereRightBlue = {
+        1.15,
+        glm::dvec3(2.0, 1.2, 0.0),
+        blueMaterial
+    };
+
+    glm::dvec3 fr = glm::dvec3(5.0, 0.0, 5.0);
     glm::dvec3 br = glm::dvec3(5.0, 0.0, -5.0);
-    glm::dvec3 fl = glm::dvec3(0.0, 0.0, 0.0);
-    glm::dvec3 bl = glm::dvec3(0.0, 0.0, -5.0);
+    glm::dvec3 fl = glm::dvec3(-5.0, 0.0, 5.0);
+    glm::dvec3 bl = glm::dvec3(-5.0, 0.0, -5.0);
 
     SimpleGraphics::RefTriangle tri1 = {
         &fr, &br, &fl,
-        planeMaterial,
-        planeTransform
+        planeMaterial
     };
     SimpleGraphics::RefTriangle tri2 = {
         &fl, &br, &bl,
-        planeMaterial,
-        planeTransform
+        planeMaterial
     };
 
-    scene.addObject(&sphere1);
-    scene.addObject(&sphere2);
+    scene.addObject(&sphereLeftRed);
+    scene.addObject(&sphereLeftGreen);
+    scene.addObject(&sphereRightRed);
+    scene.addObject(&sphereRightBlue);
     scene.addObject(&tri1);
     scene.addObject(&tri2);
 

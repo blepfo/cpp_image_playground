@@ -40,6 +40,17 @@ class Scene {
             return lightId;
         }
 
+        /**
+         * Add point light with a sphere object
+         */
+        int addVisiblePointLight(::SimpleGraphics::PointLight* light, double r, int materialId) {
+            ::SimpleGraphics::Sphere* lightSphere = new ::SimpleGraphics::Sphere(
+                r, light->o, materialId, false
+            );
+            this->addLight(light);
+            return this->addObject(lightSphere);
+        }
+
         std::string toString() {
             std::stringstream ss;
             ss << "----- SCENE -----";
@@ -67,7 +78,11 @@ class Scene {
 };
 
 
-::Raytracing::HitInfo rayCast(const ::Raytracing::Ray& ray, const ::SimpleGraphics::Scene& scene); 
+::Raytracing::HitInfo rayCast(
+    const ::Raytracing::Ray& ray, 
+    const ::SimpleGraphics::Scene& scene,
+    const bool shadowRay=false
+); 
 
 bool isInShadow(
     const glm::dvec3 p, 
